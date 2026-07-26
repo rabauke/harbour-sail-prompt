@@ -1,5 +1,4 @@
-#ifndef APP_MODEL_HPP
-#define APP_MODEL_HPP
+#pragma once
 
 #include <QObject>
 #include <QStringList>
@@ -9,6 +8,7 @@
 #include "open_ai_api.hpp"
 #include "session_store.hpp"
 #include "session_list_model.hpp"
+
 
 class AppModel : public QObject {
   Q_OBJECT
@@ -21,12 +21,14 @@ public:
   Q_PROPERTY(QString apiKey READ apiKey WRITE setApiKey NOTIFY apiKeyChanged)
   Q_PROPERTY(QString model READ model WRITE setModel NOTIFY modelChanged)
   Q_PROPERTY(QStringList models READ models NOTIFY modelsChanged)
-  Q_PROPERTY(QString systemPrompt READ systemPrompt WRITE setSystemPrompt NOTIFY systemPromptChanged)
+  Q_PROPERTY(
+      QString systemPrompt READ systemPrompt WRITE setSystemPrompt NOTIFY systemPromptChanged)
   Q_PROPERTY(ChatMessageListModel* messages READ messages CONSTANT)
   Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
   Q_PROPERTY(bool configured READ configured NOTIFY configuredChanged)
   Q_PROPERTY(bool modelsLoading READ modelsLoading NOTIFY modelsLoadingChanged)
-  Q_PROPERTY(bool selectedModelAvailable READ selectedModelAvailable NOTIFY selectedModelAvailableChanged)
+  Q_PROPERTY(bool selectedModelAvailable READ selectedModelAvailable NOTIFY
+                 selectedModelAvailableChanged)
   Q_PROPERTY(bool canSend READ canSend NOTIFY canSendChanged)
   Q_PROPERTY(bool canClear READ canClear NOTIFY canClearChanged)
   Q_PROPERTY(bool exporting READ exporting NOTIFY exportingChanged)
@@ -40,7 +42,8 @@ public:
 
   Q_INVOKABLE void addUserMessage(const QString& content);
   Q_INVOKABLE void clearChat();
-  Q_INVOKABLE void applyConfig(const QString& url, const QString& apiKey, const QString& systemPrompt);
+  Q_INVOKABLE void applyConfig(const QString& url, const QString& apiKey,
+                               const QString& systemPrompt);
   Q_INVOKABLE void fetchModels();
   Q_INVOKABLE void markSettingsGuidanceShown();
   Q_INVOKABLE void loadSession(int index);
@@ -74,35 +77,34 @@ public:
 
   void saveCurrentSession();
 
-  signals:
-  void baseUrlChanged(const QString& baseUrl);
-  void apiKeyChanged(const QString& apiKey);
-  void modelChanged(const QString& model);
-  void modelsChanged();
-  void systemPromptChanged(const QString& systemPrompt);
-  void busyChanged();
-  void errorOccurred(const QString& message);
-  void configuredChanged();
-  void modelsLoadingChanged();
-  void selectedModelAvailableChanged();
-  void canSendChanged();
-  void canClearChanged();
-  void exportingChanged();
-  void exportErrorChanged();
-  void exportSuccessChanged();
-  void exportPathChanged();
-  void exportMessageChanged();
-  void renderedDocumentChanged();
-  void modelsLoaded(const QStringList& models);
-
-private slots:
-  void onGetModelsFinished(const QList<open_ai_api::Model>& models, const open_ai_api::Error& error);
-  void onStreamingChatReply(const QString& reply);
-  void onStreamingChatFinished(const QString& reply, const open_ai_api::Error& error);
-  void onStreamingUpdateTimeout();
-  void updateRenderedDocument();
+  Q_SIGNAL void baseUrlChanged(const QString& baseUrl);
+  Q_SIGNAL void apiKeyChanged(const QString& apiKey);
+  Q_SIGNAL void modelChanged(const QString& model);
+  Q_SIGNAL void modelsChanged();
+  Q_SIGNAL void systemPromptChanged(const QString& systemPrompt);
+  Q_SIGNAL void busyChanged();
+  Q_SIGNAL void errorOccurred(const QString& message);
+  Q_SIGNAL void configuredChanged();
+  Q_SIGNAL void modelsLoadingChanged();
+  Q_SIGNAL void selectedModelAvailableChanged();
+  Q_SIGNAL void canSendChanged();
+  Q_SIGNAL void canClearChanged();
+  Q_SIGNAL void exportingChanged();
+  Q_SIGNAL void exportErrorChanged();
+  Q_SIGNAL void exportSuccessChanged();
+  Q_SIGNAL void exportPathChanged();
+  Q_SIGNAL void exportMessageChanged();
+  Q_SIGNAL void renderedDocumentChanged();
+  Q_SIGNAL void modelsLoaded(const QStringList& models);
 
 private:
+  Q_SLOT void onGetModelsFinished(const QList<open_ai_api::Model>& models,
+                                  const open_ai_api::Error& error);
+  Q_SLOT void onStreamingChatReply(const QString& reply);
+  Q_SLOT void onStreamingChatFinished(const QString& reply, const open_ai_api::Error& error);
+  Q_SLOT void onStreamingUpdateTimeout();
+  Q_SLOT void updateRenderedDocument();
+
   void loadConfig();
   void saveConfig() const;
   void setExportFailure(const QString& error);
@@ -137,5 +139,3 @@ private:
 
   QSettings m_settings;
 };
-
-#endif // APP_MODEL_HPP

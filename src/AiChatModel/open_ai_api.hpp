@@ -1,5 +1,4 @@
-#ifndef OPEN_AI_API_HPP
-#define OPEN_AI_API_HPP
+#pragma once
 
 #include <QDateTime>
 #include <QMetaType>
@@ -11,6 +10,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QTimer>
+
 
 namespace open_ai_api {
 
@@ -32,9 +32,13 @@ namespace open_ai_api {
     ErrorKind error_code;
     QString description;
 
-    Error() : error_code(none) {}
-    Error(ErrorKind code, const QString& desc) : error_code(code), description(desc) {}
+    Error() : error_code(none) {
+    }
+
+    Error(ErrorKind code, const QString &desc) : error_code(code), description(desc) {
+    }
   };
+
 
   struct Model {
     Q_GADGET
@@ -44,12 +48,15 @@ namespace open_ai_api {
     QString owned_by;
   };
 
+
   struct Message {
     QString role;
     QString content;
   };
 
+
   QJsonObject createChatPayload(const QList<Message> &messages, const QString &model);
+
 
   class SseParser {
   public:
@@ -64,6 +71,7 @@ namespace open_ai_api {
     QList<QByteArray> m_dataLines;
     bool m_done;
   };
+
 
   class OpenAiApi : public QObject {
     Q_OBJECT
@@ -81,10 +89,10 @@ namespace open_ai_api {
     void cancel();
     bool active() const;
 
-    signals:
-    void getModelsFinished(const QList<open_ai_api::Model> &models, const open_ai_api::Error &error);
-    void streamingChatReply(const QString &reply);
-    void streamingChatFinished(const QString &reply, const open_ai_api::Error &error);
+    Q_SIGNAL void getModelsFinished(const QList<open_ai_api::Model> &models,
+                                    const open_ai_api::Error &error);
+    Q_SIGNAL void streamingChatReply(const QString &reply);
+    Q_SIGNAL void streamingChatFinished(const QString &reply, const open_ai_api::Error &error);
 
   private:
     enum RequestKind { NoRequest, ModelsRequest, ChatRequest };
@@ -110,8 +118,7 @@ namespace open_ai_api {
 
 }  // namespace open_ai_api
 
+
 Q_DECLARE_METATYPE(open_ai_api::Error)
 Q_DECLARE_METATYPE(open_ai_api::Model)
 Q_DECLARE_METATYPE(QList<open_ai_api::Model>)
-
-#endif // OPEN_AI_API_HPP

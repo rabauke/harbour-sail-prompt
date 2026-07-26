@@ -1,12 +1,15 @@
 #include "chat_message_list_model.hpp"
 #include <algorithm>
 
+
 ChatMessageListModel::ChatMessageListModel(QObject *parent) : QAbstractListModel(parent) {
 }
 
+
 ChatMessageListModel::~ChatMessageListModel() {
-    qDeleteAll(m_messages);
+  qDeleteAll(m_messages);
 }
+
 
 int ChatMessageListModel::rowCount(const QModelIndex &parent) const {
   if (parent.isValid()) {
@@ -15,9 +18,11 @@ int ChatMessageListModel::rowCount(const QModelIndex &parent) const {
   return m_messages.size();
 }
 
+
 int ChatMessageListModel::count() const {
   return m_messages.size();
 }
+
 
 QVariant ChatMessageListModel::data(const QModelIndex &index, int role) const {
   if (!index.isValid() || index.row() >= m_messages.size()) {
@@ -35,12 +40,14 @@ QVariant ChatMessageListModel::data(const QModelIndex &index, int role) const {
   }
 }
 
+
 QHash<int, QByteArray> ChatMessageListModel::roleNames() const {
   QHash<int, QByteArray> roles;
   roles[RoleRole] = "role";
   roles[ContentRole] = "content";
   return roles;
 }
+
 
 void ChatMessageListModel::add(ChatMessage *message) {
   beginInsertRows(QModelIndex(), m_messages.size(), m_messages.size());
@@ -49,6 +56,7 @@ void ChatMessageListModel::add(ChatMessage *message) {
   endInsertRows();
   emit countChanged();
 }
+
 
 void ChatMessageListModel::remove(int index) {
   if (index >= 0 && index < m_messages.size()) {
@@ -60,15 +68,17 @@ void ChatMessageListModel::remove(int index) {
   }
 }
 
+
 void ChatMessageListModel::clear() {
   if (m_messages.isEmpty())
-      return;
+    return;
   beginRemoveRows(QModelIndex(), 0, m_messages.size() - 1);
   qDeleteAll(m_messages);
   m_messages.clear();
   endRemoveRows();
   emit countChanged();
 }
+
 
 void ChatMessageListModel::setContent(int index, const QString &content) {
   if (index < 0 || index >= m_messages.size())
@@ -80,6 +90,7 @@ void ChatMessageListModel::setContent(int index, const QString &content) {
   QModelIndex mi = this->index(index, 0);
   emit dataChanged(mi, mi, QVector<int>() << ContentRole);
 }
+
 
 ChatMessage *ChatMessageListModel::get(int index) const {
   if (index >= 0 && index < m_messages.size())

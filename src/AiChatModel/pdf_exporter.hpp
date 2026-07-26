@@ -1,11 +1,12 @@
-#ifndef PDF_EXPORTER_HPP
-#define PDF_EXPORTER_HPP
+#pragma once
 
 #include <QDateTime>
 #include <QList>
 #include <QString>
 
+
 class ChatMessage;
+
 
 class PdfExporter {
 public:
@@ -22,5 +23,3 @@ public:
   static Result exportMessages(const QList<ChatMessage*>& messages,
                                const QString& outputDirectory = QString());
 };
-
-#endif // PDF_EXPORTER_HPP

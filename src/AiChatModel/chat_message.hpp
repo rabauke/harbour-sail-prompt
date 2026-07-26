@@ -1,8 +1,8 @@
-#ifndef CHAT_MESSAGE_HPP
-#define CHAT_MESSAGE_HPP
+#pragma once
 
 #include <QObject>
 #include <QString>
+
 
 class ChatMessage : public QObject {
   Q_OBJECT
@@ -11,7 +11,7 @@ public:
   enum Role { System = 1, User = 2, Agent = 3 };
   Q_ENUM(Role)
 
-  explicit ChatMessage(QObject *parent = nullptr);
+  explicit ChatMessage(QObject* parent = nullptr);
   explicit ChatMessage(Role role, const QString& content, QObject* parent = nullptr);
 
   Q_PROPERTY(Role role READ role WRITE setRole NOTIFY roleChanged)
@@ -31,6 +31,5 @@ private:
   QString m_content;
 };
 
-Q_DECLARE_METATYPE(ChatMessage::Role)
 
-#endif // CHAT_MESSAGE_HPP
+Q_DECLARE_METATYPE(ChatMessage::Role)

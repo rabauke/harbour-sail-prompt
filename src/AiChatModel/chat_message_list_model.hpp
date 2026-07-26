@@ -1,18 +1,15 @@
-#ifndef CHAT_MESSAGE_LIST_MODEL_HPP
-#define CHAT_MESSAGE_LIST_MODEL_HPP
+#pragma once
 
 #include <QAbstractListModel>
 #include <QList>
 #include "chat_message.hpp"
 
+
 class ChatMessageListModel : public QAbstractListModel {
   Q_OBJECT
   Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
-  enum MyItemRoles {
-      RoleRole = Qt::UserRole + 1,
-      ContentRole = Qt::UserRole + 2
-  };
+  enum MyItemRoles { RoleRole = Qt::UserRole + 1, ContentRole = Qt::UserRole + 2 };
 
   explicit ChatMessageListModel(QObject *parent = nullptr);
   ~ChatMessageListModel();
@@ -29,11 +26,8 @@ public:
 
   Q_INVOKABLE ChatMessage *get(int index) const;
 
-signals:
-  void countChanged();
+  Q_SIGNAL void countChanged();
 
 private:
   QList<ChatMessage *> m_messages;
 };
-
-#endif // CHAT_MESSAGE_LIST_MODEL_HPP

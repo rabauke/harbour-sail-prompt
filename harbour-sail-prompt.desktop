@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-sail-prompt
+Exec=harbour-sail-prompt
+Name=Sail Prompt
+Name[de]=Sail Prompt
+
+[X-Sailjail]
+OrganizationName=de.bauke
+ApplicationName=sail-prompt
+Permissions=Internet;Documents

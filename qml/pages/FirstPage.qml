@@ -2,7 +2,8 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.WebView 1.0
 
-Page {
+
+WebViewPage {
     id: page
     allowedOrientations: Orientation.All
 
@@ -16,14 +17,9 @@ Page {
         webView.runJavaScript("window.scrollTo(0, document.body.scrollHeight)")
     }
 
-    PageHeader {
-        id: pageHeader
-        title: qsTr("Sail Prompt")
-    }
-
     SilicaFlickable {
         id: chatArea
-        anchors.top: pageHeader.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: composerContainer.top
@@ -155,7 +151,11 @@ Page {
         }
     }
 
-    Timer { id: errorTimer; interval: 5000; onTriggered: errorLabel.text = "" }
+    Timer {
+        id: errorTimer
+        interval: 5000
+        onTriggered: errorLabel.text = ""
+    }
     Timer {
         id: guidanceTimer
         interval: 1
@@ -166,6 +166,7 @@ Page {
             }
         }
     }
+
     Connections {
         target: appModel
         onErrorOccurred: {
@@ -188,5 +189,6 @@ Page {
             }
         }
     }
+
     Component.onCompleted: guidanceTimer.start()
 }

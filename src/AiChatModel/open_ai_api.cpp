@@ -277,7 +277,6 @@ namespace open_ai_api {
 
     QNetworkRequest request((QUrl(urlStr)));
     request.setRawHeader("Authorization", ("Bearer " + m_api_key).toUtf8());
-    request.setRawHeader("Content-Type", "application/json");
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
     request.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);

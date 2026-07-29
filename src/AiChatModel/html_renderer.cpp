@@ -1,12 +1,5 @@
 #include "html_renderer.hpp"
-#include <QRegularExpression>
-#include <QStringList>
-#include <QUrl>
-
-
-QString HtmlRenderer::escapeHtml(const QString& text) {
-  return text.toHtmlEscaped();
-}
+#include "markdown_renderer.hpp"
 
 
 QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
@@ -43,7 +36,17 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
       "pre, code { color: #111; background-color: #eee; }"
       "a { color: #0645ad; text-decoration: underline; }"
       "}"
-      "</style></head><body>";
+      "</style>"
+      // Configure MathJax to typeset the "\( ... \)" / "\[ ... \]" delimiters that
+      // markdown_renderer::to_html() rewrites the parsed math spans into.
+      "<script>"
+      "window.MathJax = {"
+      "tex: { inlineMath: [['\\\\(', '\\\\)']], displayMath: [['\\\\[', '\\\\]']] },"
+      "options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }"
+      "};"
+      "</script>"
+      "<script src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>"
+      "</head><body>";
 
   for (int i = 0; i < messages.size(); ++i) {
     ChatMessage* msg = messages.at(i);
@@ -62,143 +65,14 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
 }
 
 
-static QString formatPlain(QString text) {
-  text = text.toHtmlEscaped();
-  text.replace(QRegularExpression("\\*\\*([^*]+)\\*\\*"), "<b>\\1</b>");
-  text.replace(QRegularExpression("__([^_]+)__"), "<b>\\1</b>");
-  text.replace(QRegularExpression("\\*([^*]+)\\*"), "<i>\\1</i>");
-  text.replace(QRegularExpression("_([^_]+)_"), "<i>\\1</i>");
-  return text;
-}
-
-
-static bool safeLink(const QString& value) {
-  const QUrl url(value.trimmed());
-  const QString scheme = url.scheme().toLower();
-  return url.isValid() && (scheme == "http" || scheme == "https" || scheme == "mailto");
-}
-
-
-static QString processInline(const QString& text) {
-  const QRegularExpression token("`([^`]*)`|\\[([^\\]]+)\\]\\(([^\\s)]+)\\)");
-  QRegularExpressionMatchIterator matches = token.globalMatch(text);
-  QString result;
-  int position = 0;
-  while (matches.hasNext()) {
-    const QRegularExpressionMatch match = matches.next();
-    result += formatPlain(text.mid(position, match.capturedStart() - position));
-    if (!match.captured(1).isNull()) {
-      result += "<code>" + match.captured(1).toHtmlEscaped() + "</code>";
-    } else if (safeLink(match.captured(3))) {
-      result += "<a href=\"" + match.captured(3).trimmed().toHtmlEscaped() + "\">" +
-                formatPlain(match.captured(2)) + "</a>";
-    } else {
-      result += formatPlain(match.captured(0));
-    }
-    position = match.capturedEnd();
-  }
-  result += formatPlain(text.mid(position));
-  return result;
-}
-
-
 QString HtmlRenderer::renderMarkdown(const QString& text) {
   if (text.isEmpty())
     return QString();
 
-  QStringList lines = text.split('\n');
-  QString html;
-  bool inCodeBlock = false;
-  enum ListType { NoList, UnorderedList, OrderedList };
-  ListType listType = NoList;
-  QString codeBlockContent;
-  QStringList paragraph;
+  return markdown_renderer::to_html(text);
+}
 
-  const auto flushParagraph = [&html, &paragraph]() {
-    if (!paragraph.isEmpty()) {
-      html += "<p>" + processInline(paragraph.join("\n")).replace("\n", "<br>") + "</p>";
-      paragraph.clear();
-    }
-  };
-  const auto closeList = [&html, &listType]() {
-    if (listType != NoList) {
-      html += listType == OrderedList ? "</ol>" : "</ul>";
-      listType = NoList;
-    }
-  };
 
-  for (int i = 0; i < lines.size(); ++i) {
-    QString line = lines[i];
-
-    // Code blocks
-    if (line.trimmed().startsWith("```")) {
-      flushParagraph();
-      closeList();
-      if (inCodeBlock) {
-        html += "<pre><code>" + escapeHtml(codeBlockContent) + "</code></pre>";
-        codeBlockContent.clear();
-        inCodeBlock = false;
-      } else {
-        inCodeBlock = true;
-      }
-      continue;
-    }
-
-    if (inCodeBlock) {
-      codeBlockContent += line + "\n";
-      continue;
-    }
-
-    // Headings
-    if (line.startsWith("#")) {
-      int level = 0;
-      while (level < line.length() && line[level] == '#')
-        level++;
-      if (level > 0 && level <= 6 && level < line.length() && line[level] == ' ') {
-        QString content = line.mid(level + 1).trimmed();
-        flushParagraph();
-        closeList();
-        html +=
-            QString("<h%1>").arg(level) + processInline(content) + QString("</h%1>").arg(level);
-        continue;
-      }
-    }
-
-    // Lists
-    const bool ordered = QRegularExpression("^\\s*\\d+\\.\\s").match(line).hasMatch();
-    const bool unordered = line.trimmed().startsWith("* ") || line.trimmed().startsWith("- ");
-    if (ordered || unordered) {
-      flushParagraph();
-      const ListType wanted = ordered ? OrderedList : UnorderedList;
-      if (listType != wanted) {
-        closeList();
-        html += wanted == OrderedList ? "<ol>" : "<ul>";
-        listType = wanted;
-      }
-      QString content = line.trimmed();
-      int spaceIdx = content.indexOf(' ');
-      if (spaceIdx != -1) {
-        content = content.mid(spaceIdx + 1);
-      }
-      html += "<li>" + processInline(content) + "</li>";
-      continue;
-    } else {
-      closeList();
-    }
-
-    // Paragraphs
-    if (line.trimmed().isEmpty()) {
-      flushParagraph();
-      continue;
-    }
-    paragraph.append(line);
-  }
-
-  if (inCodeBlock) {
-    html += "<pre><code>" + escapeHtml(codeBlockContent) + "</code></pre>";
-  }
-  flushParagraph();
-  closeList();
-
-  return html;
+QString HtmlRenderer::escapeHtml(const QString& text) {
+  return text.toHtmlEscaped();
 }

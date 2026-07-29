@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.19)
-project(harbour-sail-prompt CXX)
+project(harbour-sail-prompt CXX C)
 
 find_package (Qt5 COMPONENTS Core Network Qml Gui Quick PrintSupport REQUIRED)
 
@@ -9,8 +9,25 @@ pkg_search_module(SAILFISH sailfishapp REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/external)
+
+add_custom_command(OUTPUT
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c.c
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c-html.c
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/entity.c
+    COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_SOURCE_DIR}/external/md4c-release-0.5.3.tar.gz
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/external)
+
+add_library(md4c STATIC
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c.c
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c-html.c
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/entity.c
+)
+set_target_properties(md4c PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(md4c PUBLIC ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/)
 
 find_program(LRELEASE_EXECUTABLE lrelease REQUIRED)
 set(TS_FILES
@@ -39,6 +56,7 @@ add_executable(harbour-sail-prompt
     src/AiChatModel/open_ai_api.cpp
     src/AiChatModel/app_model.cpp
     src/AiChatModel/html_renderer.cpp
+    src/AiChatModel/markdown_renderer.cpp
     src/AiChatModel/pdf_exporter.cpp
     src/AiChatModel/session_store.cpp
     src/AiChatModel/session_list_model.cpp
@@ -49,8 +67,11 @@ target_compile_definitions(harbour-sail-prompt PRIVATE
 target_include_directories(harbour-sail-prompt PRIVATE
     $<BUILD_INTERFACE:
     ${SAILFISH_INCLUDE_DIRS}
->)
+>
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/
+)
 target_link_libraries(harbour-sail-prompt
+    md4c
     Qt5::Quick
     Qt5::Network
     Qt5::PrintSupport
@@ -62,9 +83,14 @@ add_executable(test_app_model
     src/AiChatModel/open_ai_api.cpp
     src/AiChatModel/chat_message.cpp
     src/AiChatModel/html_renderer.cpp
+    src/AiChatModel/markdown_renderer.cpp
     src/AiChatModel/chat_message_list_model.cpp
 )
+target_include_directories(test_app_model PRIVATE
+    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/
+)
 target_link_libraries(test_app_model
+    md4c
     Qt5::Core
     Qt5::Network
     Qt5::PrintSupport
@@ -85,9 +111,11 @@ add_executable(test_pdf_export
     src/test_pdf_export.cpp
     src/AiChatModel/chat_message.cpp
     src/AiChatModel/html_renderer.cpp
+    src/AiChatModel/markdown_renderer.cpp
     src/AiChatModel/pdf_exporter.cpp
 )
 target_link_libraries(test_pdf_export
+    md4c
     Qt5::Gui
     Qt5::PrintSupport
 )

@@ -137,5 +137,5 @@ private:
   SessionListModel* m_sessionListModel;
   QString m_currentSessionId;
 
-  QSettings m_settings;
+  mutable QSettings m_settings;
 };

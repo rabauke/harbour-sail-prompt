@@ -16,7 +16,7 @@ AppModel::AppModel(QObject* parent)
       m_exportSuccess(false),
       m_sessionStore(new SessionStore(this)),
       m_sessionListModel(new SessionListModel(m_sessionStore, this)),
-      m_settings("harbour-sail-prompt", "harbour-sail-prompt") {
+      m_settings() {
   connect(m_sessionListModel, &SessionListModel::errorOccurred, this, &AppModel::errorOccurred);
   loadConfig();
 
@@ -425,12 +425,12 @@ void AppModel::loadConfig() {
 
 
 void AppModel::saveConfig() const {
-  QSettings settings("harbour-sail-prompt", "harbour-sail-prompt");
-  settings.setValue("baseUrl", m_baseUrl);
-  settings.setValue("apiKey", m_apiKey);
-  settings.setValue("model", m_model);
-  settings.setValue("systemPrompt", m_systemPrompt);
-  settings.setValue("models", m_models);
+  m_settings.setValue("baseUrl", m_baseUrl);
+  m_settings.setValue("apiKey", m_apiKey);
+  m_settings.setValue("model", m_model);
+  m_settings.setValue("systemPrompt", m_systemPrompt);
+  m_settings.setValue("models", m_models);
+  m_settings.sync();
 }
 
 

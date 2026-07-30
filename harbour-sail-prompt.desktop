@@ -7,6 +7,6 @@ Name=Sail Prompt
 Name[de]=Sail Prompt
 
 [X-Sailjail]
-OrganizationName=de.bauke
-ApplicationName=sail-prompt
-Permissions=Internet;Documents
+Permissions=Internet;UserDirs;WebView
+OrganizationName=rabauke
+ApplicationName=harbour-sail-prompt

@@ -3,10 +3,10 @@
 #endif
 
 #include <QScopedPointer>
-#include <QLocale>
-#include <QtQuick>
-#include <QQmlContext>
-#include <QTranslator>
+#include <QGuiApplication>
+#include <QMetaType>
+#include <QQmlEngine>
+#include <QQuickView>
 #include <sailfishapp.h>
 #include "AiChatModel/app_model.hpp"
 
@@ -16,12 +16,10 @@ int main(int argc, char *argv[]) {
   app->setApplicationName(QStringLiteral("harbour-sail-prompt"));
   app->setOrganizationName(QStringLiteral("rabauke"));
 
-  QQuickView *view{SailfishApp::createView()};
+  qmlRegisterType<AppModel>("SailPromptQuick", 1, 0, "AppModel");
 
-  AppModel *appModel{new AppModel(app.take())};
-  view->rootContext()->setContextProperty("appModel", appModel);
+  QScopedPointer<QQuickView> view{SailfishApp::createView()};
   view->setSource(SailfishApp::pathToMainQml());
   view->show();
-
   return app->exec();
 }

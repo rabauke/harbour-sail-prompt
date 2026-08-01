@@ -145,6 +145,10 @@ install(FILES icons/172x172/harbour-sail-prompt.png
     DESTINATION share/icons/hicolor/172x172/apps
 )
 
+install(FILES images/cover.png
+    DESTINATION share/harbour-sail-prompt/images
+)
+
 # Get the other files reachable from the project tree in Qt Creator
 FILE(GLOB TsFiles "translations/*.ts")
 add_custom_target(distfiles

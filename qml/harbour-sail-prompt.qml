@@ -1,20 +1,22 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import SailPromptQuick 1.0
-import "pages"
+import 'pages'
+
 
 ApplicationWindow {
-    id: appView
+  id: appView
 
-    AppModel {
-        id: appModel
+  AppModel {
+    id: appModel
+  }
+
+  initialPage:
+    Component {
+      FirstPage {
+      }
     }
 
-    initialPage:
-        Component {
-            FirstPage { }
-    }
-
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
-    allowedOrientations: defaultAllowedOrientations
+  cover: Qt.resolvedUrl('cover/CoverPage.qml')
+  allowedOrientations: defaultAllowedOrientations
 }

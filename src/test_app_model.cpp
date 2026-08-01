@@ -21,15 +21,15 @@ int main(int argc, char *argv[]) {
   QObject::connect(&messageModel, &ChatMessageListModel::countChanged,
                    [&countChanges]() { ++countChanges; });
   messageModel.add(new ChatMessage(ChatMessage::User, "test"));
-  if (!require(messageModel.count() == 1 && countChanges == 1, "message count after add"))
+  if (!require(messageModel.count() == 1 and countChanges == 1, "message count after add"))
     return 1;
   messageModel.remove(0);
-  if (!require(messageModel.count() == 0 && countChanges == 2, "message count after remove"))
+  if (!require(messageModel.count() == 0 and countChanges == 2, "message count after remove"))
     return 1;
   messageModel.add(new ChatMessage(ChatMessage::User, "one"));
   messageModel.add(new ChatMessage(ChatMessage::Agent, "two"));
   messageModel.clear();
-  if (!require(messageModel.count() == 0 && countChanges == 5, "message count after clear"))
+  if (!require(messageModel.count() == 0 and countChanges == 5, "message count after clear"))
     return 1;
 
   QList<open_ai_api::Message> messages;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
       !require(html.contains("<ol><li>first</li><li>second</li></ol><ul><li>bullet</li></ul>"),
                "ordered and unordered lists") ||
       !require(html.contains("<code>&lt;code&gt;</code>"), "inline code escaping") ||
-      !require(html.contains("<pre><code>&lt;script&gt;\n") && html.contains("</code></pre>"),
+      !require(html.contains("<pre><code>&lt;script&gt;\n") and html.contains("</code></pre>"),
                "unclosed code block") ||
       !require(!html.contains("<script>window"), "no executable scrolling script"))
     return 1;

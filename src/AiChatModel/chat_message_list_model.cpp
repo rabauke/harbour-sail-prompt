@@ -25,7 +25,7 @@ int ChatMessageListModel::count() const {
 
 
 QVariant ChatMessageListModel::data(const QModelIndex &index, int role) const {
-  if (!index.isValid() || index.row() >= m_messages.size()) {
+  if (not index.isValid() or index.row() >= m_messages.size()) {
     return QVariant();
   }
 
@@ -59,7 +59,7 @@ void ChatMessageListModel::add(ChatMessage *message) {
 
 
 void ChatMessageListModel::remove(int index) {
-  if (index >= 0 && index < m_messages.size()) {
+  if (index >= 0 and index < m_messages.size()) {
     beginRemoveRows(QModelIndex(), index, index);
     ChatMessage *message = m_messages.takeAt(index);
     message->deleteLater();
@@ -81,7 +81,7 @@ void ChatMessageListModel::clear() {
 
 
 void ChatMessageListModel::setContent(int index, const QString &content) {
-  if (index < 0 || index >= m_messages.size())
+  if (index < 0 or index >= m_messages.size())
     return;
   ChatMessage *msg = m_messages.at(index);
   if (msg->content() == content)
@@ -93,7 +93,7 @@ void ChatMessageListModel::setContent(int index, const QString &content) {
 
 
 ChatMessage *ChatMessageListModel::get(int index) const {
-  if (index >= 0 && index < m_messages.size())
+  if (index >= 0 and index < m_messages.size())
     return m_messages.at(index);
   return nullptr;
 }

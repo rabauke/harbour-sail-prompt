@@ -16,7 +16,7 @@ QString PdfExporter::sanitizeTitle(const QString& title) {
     const QChar character = simplified.at(i);
     if (character.isLetterOrNumber()) {
       result += character;
-    } else if (!result.isEmpty() && !result.endsWith('_')) {
+    } else if (not result.isEmpty() and not result.endsWith('_')) {
       result += '_';
     }
   }
@@ -44,13 +44,13 @@ QString PdfExporter::htmlForMessages(const QList<ChatMessage*>& messages, QStrin
   bool hasUserMessage = false;
   for (int i = 0; i < messages.size(); ++i) {
     ChatMessage* message = messages.at(i);
-    if (!message || message->role() == ChatMessage::System)
+    if (not message or message->role() == ChatMessage::System)
       continue;
-    if (message->role() == ChatMessage::User && !message->content().trimmed().isEmpty())
+    if (message->role() == ChatMessage::User and not message->content().trimmed().isEmpty())
       hasUserMessage = true;
     exportMessages.append(message);
   }
-  if (!hasUserMessage) {
+  if (not hasUserMessage) {
     if (error)
       *error = "A conversation must contain a user message before it can be exported";
     return QString();
@@ -83,19 +83,19 @@ PdfExporter::Result PdfExporter::exportMessages(const QList<ChatMessage*>& messa
   }
 
   QFileInfo destination(directoryPath);
-  if (destination.exists() && !destination.isDir()) {
+  if (destination.exists() and not destination.isDir()) {
     result.error = "The PDF destination is not a directory";
     return result;
   }
   QDir directory;
-  if (!directory.mkpath(directoryPath)) {
+  if (not directory.mkpath(directoryPath)) {
     result.error = "Could not create the PDF destination directory";
     return result;
   }
 
   QString title;
   for (int i = 0; i < messages.size(); ++i) {
-    if (messages.at(i) && messages.at(i)->role() == ChatMessage::User) {
+    if (messages.at(i) and messages.at(i)->role() == ChatMessage::User) {
       title = messages.at(i)->content();
       break;
     }
@@ -110,8 +110,8 @@ PdfExporter::Result PdfExporter::exportMessages(const QList<ChatMessage*>& messa
   document.print(&printer);
 
   QFile file(path);
-  if (!file.exists() || !file.open(QIODevice::ReadOnly) || file.size() == 0 ||
-      !file.read(4).startsWith("%PDF")) {
+  if (not file.exists() or not file.open(QIODevice::ReadOnly) or file.size() == 0 or
+      not file.read(4).startsWith("%PDF")) {
     file.close();
     QFile::remove(path);
     result.error = "Failed to create a valid PDF file";

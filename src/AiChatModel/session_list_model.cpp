@@ -20,7 +20,7 @@ int SessionListModel::rowCount(const QModelIndex& parent) const {
 
 
 QVariant SessionListModel::data(const QModelIndex& index, int role) const {
-  if (!index.isValid() || index.row() >= m_sessions.size())
+  if (not index.isValid() or index.row() >= m_sessions.size())
     return QVariant();
 
   const Session& session = m_sessions.at(index.row());
@@ -63,7 +63,7 @@ void SessionListModel::refresh() {
 
 
 void SessionListModel::deleteSession(int index) {
-  if (index < 0 || index >= m_sessions.size())
+  if (index < 0 or index >= m_sessions.size())
     return;
   deleteSessionById(m_sessions.at(index).id);
 }
@@ -91,7 +91,7 @@ void SessionListModel::deleteSessionById(const QString& id) {
 
 
 QString SessionListModel::sessionId(int index) const {
-  if (index < 0 || index >= m_sessions.size())
+  if (index < 0 or index >= m_sessions.size())
     return QString();
   return m_sessions.at(index).id;
 }
@@ -99,7 +99,7 @@ QString SessionListModel::sessionId(int index) const {
 
 QList<ChatMessage*> SessionListModel::messages(int index) const {
   QList<ChatMessage*> result;
-  if (index < 0 || index >= m_sessions.size())
+  if (index < 0 or index >= m_sessions.size())
     return result;
 
   for (int i = 0; i < m_sessions.at(index).messages.size(); ++i) {

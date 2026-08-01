@@ -36,9 +36,9 @@ namespace {
       description = QString("HTTP %1").arg(status);
     else
       description = QString("HTTP %1: %2").arg(status).arg(description);
-    if (status == 401 || status == 403)
+    if (status == 401 or status == 403)
       return open_ai_api::Error(open_ai_api::Error::invalid_api_key, description);
-    if (status == 404 || apiMessage.contains("model", Qt::CaseInsensitive))
+    if (status == 404 or apiMessage.contains("model", Qt::CaseInsensitive))
       return open_ai_api::Error(open_ai_api::Error::invalid_model, description);
     return open_ai_api::Error(open_ai_api::Error::network_error, description);
   }
@@ -83,26 +83,26 @@ namespace open_ai_api {
     }
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
-    if (parseError.error != QJsonParseError::NoError || !document.isObject())
+    if (parseError.error != QJsonParseError::NoError or not document.isObject())
       return Error(Error::invalid_response,
                    QString("Malformed streaming response: %1").arg(parseError.errorString()));
     const QJsonObject response = document.object();
     const QString apiMessage = apiErrorMessage(response);
-    if (!apiMessage.isEmpty())
+    if (not apiMessage.isEmpty())
       return Error(apiMessage.contains("model", Qt::CaseInsensitive) ? Error::invalid_model
                                                                      : Error::invalid_response,
                    apiMessage);
     const QJsonValue choicesValue = response.value("choices");
-    if (!choicesValue.isArray() || choicesValue.toArray().isEmpty() ||
-        !choicesValue.toArray().first().isObject())
+    if (not choicesValue.isArray() or choicesValue.toArray().isEmpty() or
+        not choicesValue.toArray().first().isObject())
       return Error(Error::invalid_response, "Streaming response has no valid choices array");
     const QJsonObject choice = choicesValue.toArray().first().toObject();
-    if (!choice.value("delta").isObject())
+    if (not choice.value("delta").isObject())
       return Error(Error::invalid_response, "Streaming response has no valid delta object");
     const QJsonValue content = choice.value("delta").toObject().value("content");
-    if (!content.isUndefined() && !content.isString())
+    if (not content.isUndefined() and not content.isString())
       return Error(Error::invalid_response, "Streaming response content is not a string");
-    if (content.isString() && !content.toString().isEmpty())
+    if (content.isString() and not content.toString().isEmpty())
       chunks->append(content.toString());
     return Error();
   }
@@ -123,7 +123,7 @@ namespace open_ai_api {
       if (line.isEmpty()) {
         const Error error = processEvent(m_dataLines, chunks);
         m_dataLines.clear();
-        if (error.error_code != Error::none || m_done)
+        if (error.error_code != Error::none or m_done)
           return error;
       } else if (line.startsWith("data:")) {
         QByteArray value = line.mid(5);
@@ -133,7 +133,7 @@ namespace open_ai_api {
       }
     }
     if (final) {
-      if (!m_buffer.isEmpty()) {
+      if (not m_buffer.isEmpty()) {
         QByteArray line = m_buffer;
         if (line.endsWith('\r'))
           line.chop(1);
@@ -241,7 +241,7 @@ namespace open_ai_api {
 
 
   void OpenAiApi::cancel() {
-    if (!m_reply)
+    if (not m_reply)
       return;
     m_cancelled = true;
     m_reply->abort();
@@ -268,10 +268,10 @@ namespace open_ai_api {
 
 
   void OpenAiApi::getModels() {
-    if (!beginRequest(ModelsRequest))
+    if (not beginRequest(ModelsRequest))
       return;
     QString urlStr = m_base_url.toString();
-    if (!urlStr.endsWith("/"))
+    if (not urlStr.endsWith("/"))
       urlStr.append("/");
     urlStr.append("models");
 
@@ -310,14 +310,14 @@ namespace open_ai_api {
       }
       QJsonParseError parseError;
       QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
-      if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+      if (parseError.error != QJsonParseError::NoError or not doc.isObject()) {
         finishModels(model_list, Error(Error::invalid_response,
                                        "Models response is not valid JSON object"));
         return;
       }
 
       QJsonObject response = doc.object();
-      if (!response.value("data").isArray()) {
+      if (not response.value("data").isArray()) {
         finishModels(model_list,
                      Error(Error::invalid_response, "Models response has no data array"));
         return;
@@ -325,14 +325,14 @@ namespace open_ai_api {
       QJsonArray modelsArray = response["data"].toArray();
       for (int i = 0; i < modelsArray.size(); ++i) {
         QJsonValue value = modelsArray.at(i);
-        if (!value.isObject()) {
+        if (not value.isObject()) {
           finishModels(QList<Model>(), Error(Error::invalid_response,
                                              "Models response contains a malformed entry"));
           return;
         }
         QJsonObject model_obj = value.toObject();
         Model model;
-        if (!model_obj.value("id").isString() ||
+        if (not model_obj.value("id").isString() or
             model_obj.value("id").toString().trimmed().isEmpty()) {
           finishModels(QList<Model>(),
                        Error(Error::invalid_response,
@@ -340,9 +340,9 @@ namespace open_ai_api {
           return;
         }
         model.id = model_obj["id"].toString();
-        if (model_obj.contains("created") && model_obj["created"].isDouble())
+        if (model_obj.contains("created") and model_obj["created"].isDouble())
           model.created = QDateTime::fromTime_t((uint)model_obj["created"].toDouble());
-        if (model_obj.contains("owned_by") && model_obj["owned_by"].isString())
+        if (model_obj.contains("owned_by") and model_obj["owned_by"].isString())
           model.owned_by = model_obj["owned_by"].toString();
         model_list.append(model);
       }
@@ -402,7 +402,7 @@ namespace open_ai_api {
     });
 
     connect(m_reply, &QNetworkReply::finished, this, [this]() {
-      if (!m_reply || m_finishing)
+      if (!m_reply or m_finishing)
         return;
       QNetworkReply *reply = m_reply;
       const QByteArray remaining = reply->readAll();

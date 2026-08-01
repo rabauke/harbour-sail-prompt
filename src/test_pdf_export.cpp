@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   QList<ChatMessage *> messages;
   messages.append(new ChatMessage(ChatMessage::Agent, "Agent only"));
   PdfExporter::Result result = PdfExporter::exportMessages(messages, temporaryDirectory.path());
-  if (!require(!result.success && result.error.contains("user message"),
+  if (!require(!result.success and result.error.contains("user message"),
                "user message required"))
     return 1;
   qDeleteAll(messages);
@@ -53,11 +53,11 @@ int main(int argc, char *argv[]) {
   messages.append(new ChatMessage(ChatMessage::System, "API-SECRET-SYSTEM-PROMPT"));
   QString htmlError;
   const QString html = PdfExporter::htmlForMessages(messages, &htmlError);
-  if (!require(htmlError.isEmpty() && html.contains("Rendered Markdown") &&
+  if (!require(htmlError.isEmpty() and html.contains("Rendered Markdown") &&
                    !html.contains("API-SECRET-SYSTEM-PROMPT"),
                "HTML source secret exclusion"))
     return 1;
-  if (!require(html.contains("@media print") && html.contains("background-color: #fff"),
+  if (!require(html.contains("@media print") and html.contains("background-color: #fff"),
                "print styling"))
     return 1;
 
@@ -67,14 +67,14 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   QFile pdf(result.path);
-  if (!require(pdf.open(QIODevice::ReadOnly) && pdf.size() > 0 && pdf.read(4) == "%PDF",
+  if (!require(pdf.open(QIODevice::ReadOnly) and pdf.size() > 0 and pdf.read(4) == "%PDF",
                "valid PDF output"))
     return 1;
   pdf.close();
 
   const PdfExporter::Result repeated =
       PdfExporter::exportMessages(messages, temporaryDirectory.path());
-  if (!require(repeated.success && repeated.path != result.path,
+  if (!require(repeated.success and repeated.path != result.path,
                "repeated export has distinct path"))
     return 1;
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   const PdfExporter::Result invalidDestination =
       PdfExporter::exportMessages(messages, fileDestination);
   if (!require(
-          !invalidDestination.success && invalidDestination.error.contains("not a directory"),
+          !invalidDestination.success and invalidDestination.error.contains("not a directory"),
           "non-directory destination failure"))
     return 1;
 

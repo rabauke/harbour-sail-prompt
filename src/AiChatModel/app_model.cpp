@@ -89,7 +89,7 @@ QString AppModel::model() const {
 
 
 void AppModel::setModel(const QString& model) {
-  if (!model.isEmpty() && !m_models.contains(model)) {
+  if (not model.isEmpty() and not m_models.contains(model)) {
     emit errorOccurred("Select a model returned by the configured API");
     return;
   }
@@ -134,8 +134,8 @@ bool AppModel::busy() const {
 
 bool AppModel::configured() const {
   const QUrl url(m_baseUrl);
-  return url.isValid() && !url.scheme().isEmpty() && !url.host().isEmpty() &&
-         !m_apiKey.trimmed().isEmpty();
+  return url.isValid() and not url.scheme().isEmpty() and not url.host().isEmpty() and
+         not m_apiKey.trimmed().isEmpty();
 }
 
 
@@ -145,19 +145,18 @@ bool AppModel::modelsLoading() const {
 
 
 bool AppModel::selectedModelAvailable() const {
-  return !m_model.isEmpty() && m_models.contains(m_model);
+  return not m_model.isEmpty() and m_models.contains(m_model);
 }
 
 
 bool AppModel::canSend() const {
-  return configured() && selectedModelAvailable() && !m_busy && !m_modelsLoading;
+  return configured() and selectedModelAvailable() and not m_busy and not m_modelsLoading;
 }
 
 
 bool AppModel::canClear() const {
-  return !m_busy;
+  return not m_busy;
 }
-
 
 
 bool AppModel::exporting() const {
@@ -210,7 +209,7 @@ void AppModel::saveCurrentSession() {
   session.id = m_currentSessionId;
   for (int i = 0; i < m_messages->rowCount(); ++i) {
     ChatMessage* msg = m_messages->get(i);
-    if (msg->role() != ChatMessage::User && msg->role() != ChatMessage::Agent)
+    if (msg->role() != ChatMessage::User and msg->role() != ChatMessage::Agent)
       continue;
     session.messages.append(new ChatMessage(msg->role(), msg->content()));
   }
@@ -218,7 +217,7 @@ void AppModel::saveCurrentSession() {
   if (m_sessionStore->saveSession(session)) {
     m_currentSessionId = session.id;
     m_sessionListModel->refresh();
-  } else if (!m_sessionStore->lastError().isEmpty()) {
+  } else if (not m_sessionStore->lastError().isEmpty()) {
     emit errorOccurred(m_sessionStore->lastError());
   }
   SessionStore::clearSession(session);
@@ -282,7 +281,7 @@ void AppModel::exportToPdf() {
     msgs.append(m_messages->get(i));
   }
   const PdfExporter::Result result = PdfExporter::exportMessages(msgs);
-  if (!result.success) {
+  if (not result.success) {
     setExportFailure(result.error);
     return;
   }
@@ -323,7 +322,7 @@ void AppModel::markSettingsGuidanceShown() {
 void AppModel::addUserMessage(const QString& content) {
   if (content.trimmed().isEmpty())
     return;
-  if (!canSend()) {
+  if (not canSend()) {
     emit errorOccurred("Configure the API and select a discovered model before sending");
     return;
   }
@@ -331,7 +330,7 @@ void AppModel::addUserMessage(const QString& content) {
   m_messages->add(new ChatMessage(ChatMessage::User, content));
 
   QList<open_ai_api::Message> apiMessages;
-  if (!m_systemPrompt.isEmpty()) {
+  if (not m_systemPrompt.isEmpty()) {
     open_ai_api::Message sysMsg;
     sysMsg.role = "system";
     sysMsg.content = m_systemPrompt;
@@ -394,11 +393,11 @@ void AppModel::applyConfig(const QString& url, const QString& apiKey,
 
 
 void AppModel::fetchModels() {
-  if (!configured()) {
+  if (not configured()) {
     emit errorOccurred("Configure a valid API URL and key before loading models");
     return;
   }
-  if (m_busy || m_modelsLoading) {
+  if (m_busy or m_modelsLoading) {
     emit errorOccurred("Another API request is already in progress");
     return;
   }
@@ -416,7 +415,7 @@ void AppModel::loadConfig() {
   m_systemPrompt = m_settings.value("systemPrompt", "").toString();
   m_models = m_settings.value("models", QStringList()).toStringList();
   m_settingsGuidanceShown = m_settings.value("settingsGuidanceShown", false).toBool();
-  if (!m_models.contains(m_model))
+  if (not m_models.contains(m_model))
     m_model.clear();
 
   m_api->setBaseUrl(QUrl(m_baseUrl));
@@ -448,7 +447,7 @@ void AppModel::onGetModelsFinished(const QList<open_ai_api::Model>& models,
   for (int i = 0; i < models.size(); ++i) {
     m_models.append(models.at(i).id);
   }
-  if (!m_models.contains(m_model)) {
+  if (not m_models.contains(m_model)) {
     m_model.clear();
     emit modelChanged(m_model);
   }

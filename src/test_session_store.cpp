@@ -272,7 +272,7 @@ int main(int argc, char* argv[]) {
       return 1;
     SessionListModel model(&store);
     QList<ChatMessage*> selected = model.messagesById(selectedId);
-    if (!require(selected.size() == 1 && selected[0]->content() == "Selected older",
+    if (!require(selected.size() == 1 and selected[0]->content() == "Selected older",
                  "stable lookup after reorder"))
       return 1;
     qDeleteAll(selected);

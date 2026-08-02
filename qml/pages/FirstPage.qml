@@ -3,7 +3,7 @@ import Sailfish.Silica 1.0
 import Sailfish.WebView 1.0
 
 
-WebViewPage {
+Page {
   id: page
   allowedOrientations: Orientation.Portrait | Orientation.PortraitInverted
 
@@ -33,7 +33,7 @@ WebViewPage {
       MenuItem {
         text: qsTr('History')
         enabled: !appModel.busy
-        onClicked: pageStack.animatorPush(Qt.resolvedUrl('HistoryPage.qml'))
+        onClicked: pageStack.push(Qt.resolvedUrl('HistoryPage.qml'))
       }
       MenuItem {
         text: qsTr('New Chat')

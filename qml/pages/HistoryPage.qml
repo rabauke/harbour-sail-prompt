@@ -64,15 +64,15 @@ Page {
       }
 
       menu: ContextMenu {
-        MenuItem {
-          text: qsTr('Delete')
-          onClicked: {
-            var idToDelete = model.id
-            remorseAction(qsTr('Deleting'), function () {
-              appModel.history.deleteSessionById(idToDelete)
-            })
+          MenuItem {
+            text: qsTr('Delete')
+            onClicked: {
+              var idToDelete = index
+              remorseAction(qsTr('Deleting'), function () {
+                appModel.history.deleteSessionById(idToDelete)
+              })
+            }
           }
-        }
       }
     }
 

@@ -5,7 +5,13 @@ import SailPromptQuick 1.0
 
 Page {
   id: historyPage
+
   allowedOrientations: Orientation.All
+
+  function openSession(idx) {
+    appModel.loadSession(idx)
+    pageStack.pop()
+  }
 
   DateTimeFormater {
     id: dateTimeFormater
@@ -13,6 +19,7 @@ Page {
 
   SilicaListView {
     id: listView
+
     model: appModel.history
     anchors.fill: parent
 
@@ -58,10 +65,7 @@ Page {
         }
       }
 
-      onClicked: {
-        appModel.loadSession(index)
-        pageStack.pop()
-      }
+      onClicked: historyPage.openSession(index)
 
       menu: ContextMenu {
           MenuItem {

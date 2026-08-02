@@ -64,12 +64,12 @@ void AppModel::setBaseUrl(const QString& baseUrl) {
     m_api->setBaseUrl(QUrl(m_baseUrl));
     m_models.clear();
     m_model.clear();
-    emit baseUrlChanged(m_baseUrl);
-    emit modelsChanged();
-    emit modelChanged(m_model);
-    emit configuredChanged();
-    emit selectedModelAvailableChanged();
-    emit canSendChanged();
+    Q_EMIT baseUrlChanged(m_baseUrl);
+    Q_EMIT modelsChanged();
+    Q_EMIT modelChanged(m_model);
+    Q_EMIT configuredChanged();
+    Q_EMIT selectedModelAvailableChanged();
+    Q_EMIT canSendChanged();
   }
 }
 
@@ -85,12 +85,12 @@ void AppModel::setApiKey(const QString& apiKey) {
     m_api->setApiKey(m_apiKey);
     m_models.clear();
     m_model.clear();
-    emit apiKeyChanged(m_apiKey);
-    emit modelsChanged();
-    emit modelChanged(m_model);
-    emit configuredChanged();
-    emit selectedModelAvailableChanged();
-    emit canSendChanged();
+    Q_EMIT apiKeyChanged(m_apiKey);
+    Q_EMIT modelsChanged();
+    Q_EMIT modelChanged(m_model);
+    Q_EMIT configuredChanged();
+    Q_EMIT selectedModelAvailableChanged();
+    Q_EMIT canSendChanged();
   }
 }
 
@@ -102,14 +102,14 @@ QString AppModel::model() const {
 
 void AppModel::setModel(const QString& model) {
   if (not model.isEmpty() and not m_models.contains(model)) {
-    emit errorOccurred("Select a model returned by the configured API");
+    Q_EMIT errorOccurred("Select a model returned by the configured API");
     return;
   }
   if (m_model != model) {
     m_model = model;
-    emit modelChanged(m_model);
-    emit selectedModelAvailableChanged();
-    emit canSendChanged();
+    Q_EMIT modelChanged(m_model);
+    Q_EMIT selectedModelAvailableChanged();
+    Q_EMIT canSendChanged();
     saveConfig();
   }
 }
@@ -128,7 +128,7 @@ QString AppModel::systemPrompt() const {
 void AppModel::setSystemPrompt(const QString& systemPrompt) {
   if (m_systemPrompt != systemPrompt) {
     m_systemPrompt = systemPrompt;
-    emit systemPromptChanged(m_systemPrompt);
+    Q_EMIT systemPromptChanged(m_systemPrompt);
     saveConfig();
   }
 }
@@ -230,7 +230,7 @@ void AppModel::saveCurrentSession() {
     m_currentSessionId = session.id;
     m_sessionListModel->refresh();
   } else if (not m_sessionStore->lastError().isEmpty()) {
-    emit errorOccurred(m_sessionStore->lastError());
+    Q_EMIT errorOccurred(m_sessionStore->lastError());
   }
   SessionStore::clearSession(session);
 }
@@ -238,7 +238,7 @@ void AppModel::saveCurrentSession() {
 
 void AppModel::loadSession(int index) {
   if (m_busy) {
-    emit errorOccurred("Cannot load a session while a response is streaming");
+    Q_EMIT errorOccurred("Cannot load a session while a response is streaming");
     return;
   }
   const QString selectedId = m_sessionListModel->sessionId(index);
@@ -258,7 +258,7 @@ void AppModel::loadSession(int index) {
 
 void AppModel::newChat() {
   if (m_busy) {
-    emit errorOccurred("Cannot start a new chat while a response is streaming");
+    Q_EMIT errorOccurred("Cannot start a new chat while a response is streaming");
     return;
   }
   saveCurrentSession();
@@ -282,11 +282,11 @@ void AppModel::exportToPdf() {
   m_exportSuccess = false;
   m_exportPath.clear();
   m_exportMessage.clear();
-  emit exportingChanged();
-  emit exportErrorChanged();
-  emit exportSuccessChanged();
-  emit exportPathChanged();
-  emit exportMessageChanged();
+  Q_EMIT exportingChanged();
+  Q_EMIT exportErrorChanged();
+  Q_EMIT exportSuccessChanged();
+  Q_EMIT exportPathChanged();
+  Q_EMIT exportMessageChanged();
 
   QList<ChatMessage*> msgs;
   for (int i = 0; i < m_messages->rowCount(); ++i) {
@@ -301,10 +301,10 @@ void AppModel::exportToPdf() {
   m_exportPath = result.path;
   m_exportMessage = tr("PDF exported to %1").arg(result.path);
   m_exporting = false;
-  emit exportingChanged();
-  emit exportSuccessChanged();
-  emit exportPathChanged();
-  emit exportMessageChanged();
+  Q_EMIT exportingChanged();
+  Q_EMIT exportSuccessChanged();
+  Q_EMIT exportPathChanged();
+  Q_EMIT exportMessageChanged();
 }
 
 
@@ -314,12 +314,12 @@ void AppModel::setExportFailure(const QString& error) {
   m_exportError = error;
   m_exportPath.clear();
   m_exportMessage.clear();
-  emit exportingChanged();
-  emit exportSuccessChanged();
-  emit exportErrorChanged();
-  emit exportPathChanged();
-  emit exportMessageChanged();
-  emit errorOccurred(error);
+  Q_EMIT exportingChanged();
+  Q_EMIT exportSuccessChanged();
+  Q_EMIT exportErrorChanged();
+  Q_EMIT exportPathChanged();
+  Q_EMIT exportMessageChanged();
+  Q_EMIT errorOccurred(error);
 }
 
 
@@ -335,7 +335,7 @@ void AppModel::addUserMessage(const QString& content) {
   if (content.trimmed().isEmpty())
     return;
   if (not canSend()) {
-    emit errorOccurred("Configure the API and select a discovered model before sending");
+    Q_EMIT errorOccurred("Configure the API and select a discovered model before sending");
     return;
   }
 
@@ -368,9 +368,9 @@ void AppModel::addUserMessage(const QString& content) {
   }
 
   m_busy = true;
-  emit busyChanged();
-  emit canSendChanged();
-  emit canClearChanged();
+  Q_EMIT busyChanged();
+  Q_EMIT canSendChanged();
+  Q_EMIT canClearChanged();
 
   // Add empty assistant message for streaming
   m_assistantMessageIndex = m_messages->rowCount();
@@ -385,7 +385,7 @@ void AppModel::addUserMessage(const QString& content) {
 
 void AppModel::clearChat() {
   if (m_busy) {
-    emit errorOccurred("Cannot clear the chat while a response is streaming");
+    Q_EMIT errorOccurred("Cannot clear the chat while a response is streaming");
     return;
   }
   m_messages->clear();
@@ -406,16 +406,16 @@ void AppModel::applyConfig(const QString& url, const QString& apiKey,
 
 void AppModel::fetchModels() {
   if (not configured()) {
-    emit errorOccurred("Configure a valid API URL and key before loading models");
+    Q_EMIT errorOccurred("Configure a valid API URL and key before loading models");
     return;
   }
   if (m_busy or m_modelsLoading) {
-    emit errorOccurred("Another API request is already in progress");
+    Q_EMIT errorOccurred("Another API request is already in progress");
     return;
   }
   m_modelsLoading = true;
-  emit modelsLoadingChanged();
-  emit canSendChanged();
+  Q_EMIT modelsLoadingChanged();
+  Q_EMIT canSendChanged();
   m_api->getModels();
 }
 
@@ -448,10 +448,10 @@ void AppModel::saveConfig() const {
 void AppModel::onGetModelsFinished(const QList<open_ai_api::Model>& models,
                                    const open_ai_api::Error& error) {
   m_modelsLoading = false;
-  emit modelsLoadingChanged();
-  emit canSendChanged();
+  Q_EMIT modelsLoadingChanged();
+  Q_EMIT canSendChanged();
   if (error.error_code != open_ai_api::Error::none) {
-    emit errorOccurred(error.description);
+    Q_EMIT errorOccurred(error.description);
     return;
   }
 
@@ -461,12 +461,12 @@ void AppModel::onGetModelsFinished(const QList<open_ai_api::Model>& models,
   }
   if (not m_models.contains(m_model)) {
     m_model.clear();
-    emit modelChanged(m_model);
+    Q_EMIT modelChanged(m_model);
   }
-  emit modelsChanged();
-  emit selectedModelAvailableChanged();
-  emit canSendChanged();
-  emit modelsLoaded(m_models);
+  Q_EMIT modelsChanged();
+  Q_EMIT selectedModelAvailableChanged();
+  Q_EMIT canSendChanged();
+  Q_EMIT modelsLoaded(m_models);
   saveConfig();
 }
 
@@ -485,12 +485,12 @@ void AppModel::onStreamingChatFinished(const QString& reply, const open_ai_api::
   updateRenderedDocument();
 
   m_busy = false;
-  emit busyChanged();
-  emit canSendChanged();
-  emit canClearChanged();
+  Q_EMIT busyChanged();
+  Q_EMIT canSendChanged();
+  Q_EMIT canClearChanged();
 
   if (error.error_code != open_ai_api::Error::none) {
-    emit errorOccurred(error.description);
+    Q_EMIT errorOccurred(error.description);
   }
 }
 
@@ -516,5 +516,5 @@ void AppModel::updateRenderedDocument() {
     msgs.append(m_messages->get(i));
   }
   m_renderedDocument = HtmlRenderer::render(msgs);
-  emit renderedDocumentChanged();
+  Q_EMIT renderedDocumentChanged();
 }

@@ -54,7 +54,7 @@ void ChatMessageListModel::add(ChatMessage *message) {
   message->setParent(this);
   m_messages.append(message);
   endInsertRows();
-  emit countChanged();
+  Q_EMIT countChanged();
 }
 
 
@@ -64,7 +64,7 @@ void ChatMessageListModel::remove(int index) {
     ChatMessage *message = m_messages.takeAt(index);
     message->deleteLater();
     endRemoveRows();
-    emit countChanged();
+    Q_EMIT countChanged();
   }
 }
 
@@ -76,7 +76,7 @@ void ChatMessageListModel::clear() {
   qDeleteAll(m_messages);
   m_messages.clear();
   endRemoveRows();
-  emit countChanged();
+  Q_EMIT countChanged();
 }
 
 
@@ -88,7 +88,7 @@ void ChatMessageListModel::setContent(int index, const QString &content) {
     return;
   msg->setContent(content);
   QModelIndex mi = this->index(index, 0);
-  emit dataChanged(mi, mi, QVector<int>() << ContentRole);
+  Q_EMIT dataChanged(mi, mi, QVector<int>() << ContentRole);
 }
 
 

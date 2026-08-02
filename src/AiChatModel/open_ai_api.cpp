@@ -212,9 +212,9 @@ namespace open_ai_api {
       const Error error(Error::request_in_progress,
                         "Another API request is already in progress");
       if (kind == ModelsRequest)
-        emit getModelsFinished(QList<Model>(), error);
+        Q_EMIT getModelsFinished(QList<Model>(), error);
       else
-        emit streamingChatFinished(QString(), error);
+        Q_EMIT streamingChatFinished(QString(), error);
       return false;
     }
     m_request_kind = kind;
@@ -253,7 +253,7 @@ namespace open_ai_api {
       return;
     m_finishing = true;
     cleanupRequest();
-    emit getModelsFinished(models, error);
+    Q_EMIT getModelsFinished(models, error);
   }
 
 
@@ -263,7 +263,7 @@ namespace open_ai_api {
     m_finishing = true;
     const QString reply = m_full_reply;
     cleanupRequest();
-    emit streamingChatFinished(reply, error);
+    Q_EMIT streamingChatFinished(reply, error);
   }
 
 
@@ -392,7 +392,7 @@ namespace open_ai_api {
       const Error error = m_sse_parser.append(data, false, &chunks);
       for (int i = 0; i < chunks.size(); ++i) {
         m_full_reply.append(chunks.at(i));
-        emit streamingChatReply(chunks.at(i));
+        Q_EMIT streamingChatReply(chunks.at(i));
       }
       if (error.error_code != Error::none) {
         m_cancelled = false;
@@ -427,7 +427,7 @@ namespace open_ai_api {
       const Error error = m_sse_parser.append(remaining, true, &chunks);
       for (int i = 0; i < chunks.size(); ++i) {
         m_full_reply.append(chunks.at(i));
-        emit streamingChatReply(chunks.at(i));
+        Q_EMIT streamingChatReply(chunks.at(i));
       }
       finishChat(error);
     });

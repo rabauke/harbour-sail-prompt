@@ -85,7 +85,7 @@ void SessionListModel::deleteSessionById(const QString& id) {
     SessionStore::clearSession(session);
     endRemoveRows();
   } else {
-    emit errorOccurred(m_store->lastError());
+    Q_EMIT errorOccurred(m_store->lastError());
   }
 }
 

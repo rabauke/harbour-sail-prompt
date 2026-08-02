@@ -23,7 +23,7 @@ QString ChatMessage::content() const {
 void ChatMessage::setRole(Role role) {
   if (m_role != role) {
     m_role = role;
-    emit roleChanged(m_role);
+    Q_EMIT roleChanged(m_role);
   }
 }
 
@@ -31,6 +31,6 @@ void ChatMessage::setRole(Role role) {
 void ChatMessage::setContent(const QString& content) {
   if (m_content != content) {
     m_content = content;
-    emit contentChanged(m_content);
+    Q_EMIT contentChanged(m_content);
   }
 }

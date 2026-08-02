@@ -1,7 +1,19 @@
 #include "app_model.hpp"
 #include "html_renderer.hpp"
 #include "pdf_exporter.hpp"
+#include <QCoreApplication>
+#include <QStandardPaths>
 #include <QUrl>
+
+
+namespace {
+
+QString settings_path() {
+  return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" +
+         QCoreApplication::applicationName() + ".conf";
+}
+
+}  // namespace
 
 
 AppModel::AppModel(QObject* parent)
@@ -16,7 +28,7 @@ AppModel::AppModel(QObject* parent)
       m_exportSuccess(false),
       m_sessionStore(new SessionStore(this)),
       m_sessionListModel(new SessionListModel(m_sessionStore, this)),
-      m_settings() {
+      m_settings(settings_path(), QSettings::NativeFormat) {
   connect(m_sessionListModel, &SessionListModel::errorOccurred, this, &AppModel::errorOccurred);
   loadConfig();
 

@@ -1,10 +1,15 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import SailPromptQuick 1.0
 
 
 Page {
   id: historyPage
   allowedOrientations: Orientation.All
+
+  DateTimeFormater {
+    id: dateTimeFormater
+  }
 
   SilicaListView {
     id: listView
@@ -17,25 +22,28 @@ Page {
 
     delegate: ListItem {
       id: delegate
-      contentHeight: Theme.itemSizeLarge
+      contentHeight: Theme.itemSizeMedium
 
       Column {
         anchors.fill: parent
+        anchors.topMargin: Theme.paddingSmall
         anchors.leftMargin: Theme.horizontalPageMargin
         anchors.rightMargin: Theme.horizontalPageMargin
         anchors.verticalCenter: parent.verticalCenter
 
         Row {
           width: parent.width
+          spacing: Theme.paddingSmall
+
           Label {
             text: model.title
             color: delegate.highlighted ? Theme.highlightColor : Theme.primaryColor
-            width: parent.width - timestampLabel.width
-            elide: Text.ElideRight
+            width: parent.width - timestampLabel.width - Theme.paddingSmall
+            truncationMode: TruncationMode.Fade
           }
           Label {
             id: timestampLabel
-            text: Qt.formatDateTime(model.timestamp, 'd MMM, hh:mm')
+            text: dateTimeFormater.formatTime(model.timestamp)
             font.pixelSize: Theme.fontSizeExtraSmall
             color: delegate.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
           }
@@ -46,7 +54,7 @@ Page {
           width: parent.width
           font.pixelSize: Theme.fontSizeExtraSmall
           color: delegate.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-          elide: Text.ElideRight
+          truncationMode: TruncationMode.Fade
         }
       }
 

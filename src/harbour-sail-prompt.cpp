@@ -9,6 +9,7 @@
 #include <QQuickView>
 #include <sailfishapp.h>
 #include "AiChatModel/app_model.hpp"
+#include "AiChatModel/date_time_formater.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -17,6 +18,7 @@ int main(int argc, char *argv[]) {
   app->setOrganizationName(QStringLiteral("rabauke"));
 
   qmlRegisterType<AppModel>("SailPromptQuick", 1, 0, "AppModel");
+  qmlRegisterType<DateTimeFormater>("SailPromptQuick", 1, 0, "DateTimeFormater");
 
   QScopedPointer<QQuickView> view{SailfishApp::createView()};
   view->setSource(SailfishApp::pathToMainQml());

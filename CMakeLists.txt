@@ -60,6 +60,8 @@ add_executable(harbour-sail-prompt
     src/AiChatModel/pdf_exporter.cpp
     src/AiChatModel/session_store.cpp
     src/AiChatModel/session_list_model.cpp
+    src/AiChatModel/date_time_formater.hpp
+    src/AiChatModel/date_time_formater.cpp
 )
 target_compile_definitions(harbour-sail-prompt PRIVATE
     $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>

@@ -5,7 +5,7 @@ import Sailfish.WebView 1.0
 
 WebViewPage {
   id: page
-  allowedOrientations: Orientation.All
+  allowedOrientations: Orientation.Portrait | Orientation.PortraitInverted
 
   property bool isConfigured: appModel.configured && appModel.selectedModelAvailable
 

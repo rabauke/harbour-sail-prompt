@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
-project(harbour-sail-prompt CXX C)
+
+project(harbour-sail-prompt VERSION 0.1.0 LANGUAGES CXX C)
 
 find_package (Qt5 COMPONENTS Core Network Qml Gui Quick PrintSupport REQUIRED)
 
@@ -49,19 +50,21 @@ foreach(TS_FILE ${TS_FILES})
 endforeach()
 add_custom_target(translations ALL DEPENDS ${QM_FILES})
 
+configure_file(src/version.hpp.in ${CMAKE_BINARY_DIR}/src/version.hpp @ONLY)
+
 add_executable(harbour-sail-prompt
     src/harbour-sail-prompt.cpp
-    src/AiChatModel/chat_message.cpp
-    src/AiChatModel/chat_message_list_model.cpp
-    src/AiChatModel/open_ai_api.cpp
-    src/AiChatModel/app_model.cpp
-    src/AiChatModel/html_renderer.cpp
-    src/AiChatModel/markdown_renderer.cpp
-    src/AiChatModel/pdf_exporter.cpp
-    src/AiChatModel/session_store.cpp
-    src/AiChatModel/session_list_model.cpp
-    src/AiChatModel/date_time_formater.hpp
-    src/AiChatModel/date_time_formater.cpp
+    src/chat_message.cpp
+    src/chat_message_list_model.cpp
+    src/open_ai_api.cpp
+    src/app_model.cpp
+    src/html_renderer.cpp
+    src/markdown_renderer.cpp
+    src/pdf_exporter.cpp
+    src/session_store.cpp
+    src/session_list_model.cpp
+    src/date_time_formater.hpp
+    src/date_time_formater.cpp
 )
 target_compile_definitions(harbour-sail-prompt PRIVATE
     $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
@@ -70,6 +73,7 @@ target_include_directories(harbour-sail-prompt PRIVATE
     $<BUILD_INTERFACE:
     ${SAILFISH_INCLUDE_DIRS}
 >
+    ${CMAKE_BINARY_DIR}/src
     ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/
 )
 target_link_libraries(harbour-sail-prompt
@@ -82,11 +86,11 @@ target_link_libraries(harbour-sail-prompt
 
 add_executable(test_app_model
     src/test_app_model.cpp
-    src/AiChatModel/open_ai_api.cpp
-    src/AiChatModel/chat_message.cpp
-    src/AiChatModel/html_renderer.cpp
-    src/AiChatModel/markdown_renderer.cpp
-    src/AiChatModel/chat_message_list_model.cpp
+    src/open_ai_api.cpp
+    src/chat_message.cpp
+    src/html_renderer.cpp
+    src/markdown_renderer.cpp
+    src/chat_message_list_model.cpp
 )
 target_include_directories(test_app_model PRIVATE
     ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/
@@ -101,9 +105,9 @@ target_link_libraries(test_app_model
 
 add_executable(test_session_store
     src/test_session_store.cpp
-    src/AiChatModel/session_store.cpp
-    src/AiChatModel/session_list_model.cpp
-    src/AiChatModel/chat_message.cpp
+    src/session_store.cpp
+    src/session_list_model.cpp
+    src/chat_message.cpp
 )
 target_link_libraries(test_session_store
     Qt5::Core
@@ -111,10 +115,10 @@ target_link_libraries(test_session_store
 
 add_executable(test_pdf_export
     src/test_pdf_export.cpp
-    src/AiChatModel/chat_message.cpp
-    src/AiChatModel/html_renderer.cpp
-    src/AiChatModel/markdown_renderer.cpp
-    src/AiChatModel/pdf_exporter.cpp
+    src/chat_message.cpp
+    src/html_renderer.cpp
+    src/markdown_renderer.cpp
+    src/pdf_exporter.cpp
 )
 target_link_libraries(test_pdf_export
     md4c
@@ -162,6 +166,8 @@ add_custom_target(distfiles
         qml/pages/SettingsPage.qml
         qml/pages/SecondPage.qml
         qml/pages/HistoryPage.qml
+        qml/pages/About.qml
+        qml/components/ThirdPartyComponent.qml
         rpm/harbour-sail-prompt.changes.in
         rpm/harbour-sail-prompt.changes.run.in
         rpm/harbour-sail-prompt.spec

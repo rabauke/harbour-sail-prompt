@@ -8,8 +8,8 @@
 #include <QQmlEngine>
 #include <QQuickView>
 #include <sailfishapp.h>
-#include "AiChatModel/app_model.hpp"
-#include "AiChatModel/date_time_formater.hpp"
+#include "app_model.hpp"
+#include "date_time_formater.hpp"
 
 
 int main(int argc, char *argv[]) {

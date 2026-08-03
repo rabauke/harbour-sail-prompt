@@ -3,8 +3,8 @@
 #include <QGuiApplication>
 #include <QTemporaryDir>
 #include <iostream>
-#include "AiChatModel/chat_message.hpp"
-#include "AiChatModel/pdf_exporter.hpp"
+#include "chat_message.hpp"
+#include "pdf_exporter.hpp"
 
 namespace {
   bool require(bool condition, const char *message) {

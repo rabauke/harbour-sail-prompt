@@ -27,8 +27,17 @@ Page {
 
     PullDownMenu {
       MenuItem {
+        text: qsTr('About Sail Prompt')
+        onClicked: pageStack.push(Qt.resolvedUrl('About.qml'))
+      }
+      MenuItem {
         text: qsTr('Settings')
         onClicked: page.openSettings()
+      }
+      MenuItem {
+        text: qsTr('Export to PDF')
+        enabled: !appModel.busy && !appModel.exporting && appModel.messages.count > 0
+        onClicked: appModel.exportToPdf()
       }
       MenuItem {
         text: qsTr('History')
@@ -39,11 +48,6 @@ Page {
         text: qsTr('New Chat')
         enabled: !appModel.busy
         onClicked: appModel.newChat()
-      }
-      MenuItem {
-        text: qsTr('Export to PDF')
-        enabled: !appModel.busy && !appModel.exporting && appModel.messages.count > 0
-        onClicked: appModel.exportToPdf()
       }
     }
 
@@ -128,6 +132,14 @@ Page {
       RotationAnimation on rotation {
         from: 0;
         to: 360; duration: 1000; loops: Animation.Infinite; running: appModel.busy
+      }
+
+      Connections {
+        target: appModel
+        onBusyChanged: {
+          if (!appModel.busy)
+            sendButton.rotation = 0
+        }
       }
     }
   }

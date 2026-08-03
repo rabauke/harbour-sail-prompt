@@ -8,6 +8,7 @@
 #include "open_ai_api.hpp"
 #include "session_store.hpp"
 #include "session_list_model.hpp"
+#include "version.hpp"
 
 
 class AppModel : public QObject {
@@ -17,6 +18,7 @@ public:
   explicit AppModel(QObject* parent = nullptr);
   ~AppModel();
 
+  Q_PROPERTY(QString version MEMBER m_version CONSTANT)
   Q_PROPERTY(QString baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
   Q_PROPERTY(QString apiKey READ apiKey WRITE setApiKey NOTIFY apiKeyChanged)
   Q_PROPERTY(QString model READ model WRITE setModel NOTIFY modelChanged)
@@ -109,6 +111,7 @@ private:
   void saveConfig() const;
   void setExportFailure(const QString& error);
 
+  QString m_version{QString::fromStdString(project_version)};
   QString m_baseUrl;
   QString m_apiKey;
   QString m_model;

@@ -1,9 +1,9 @@
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <iostream>
-#include "AiChatModel/open_ai_api.hpp"
-#include "AiChatModel/html_renderer.hpp"
-#include "AiChatModel/chat_message_list_model.hpp"
+#include "open_ai_api.hpp"
+#include "html_renderer.hpp"
+#include "chat_message_list_model.hpp"
 
 namespace {
   bool require(bool condition, const char *message) {

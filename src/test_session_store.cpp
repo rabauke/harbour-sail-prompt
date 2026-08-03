@@ -5,9 +5,9 @@
 #include <QJsonArray>
 #include <QThread>
 #include <iostream>
-#include "AiChatModel/session_store.hpp"
-#include "AiChatModel/session_list_model.hpp"
-#include "AiChatModel/chat_message.hpp"
+#include "session_store.hpp"
+#include "session_list_model.hpp"
+#include "chat_message.hpp"
 
 namespace {
   bool require(bool condition, const char* message) {

@@ -71,7 +71,7 @@ Page {
           MenuItem {
             text: qsTr('Delete')
             onClicked: {
-              var idToDelete = index
+              var idToDelete = model.id
               remorseAction(qsTr('Deleting'), function () {
                 appModel.history.deleteSessionById(idToDelete)
               })

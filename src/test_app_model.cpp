@@ -76,9 +76,36 @@ int main(int argc, char *argv[]) {
                           "<tag> & text\nsecond $x^2$\n\n"
                           "[safe](https://example.com/?a=1&b=2) [bad](javascript:alert(1))\n\n"
                           "1. first\n2. second\n- bullet\n\n`<code>`\n```\n<script>\n");
+  ChatMessage agentMessage(ChatMessage::Agent, "reply");
   QList<ChatMessage *> renderedMessages;
-  renderedMessages << &systemMessage << &userMessage;
+  renderedMessages << &systemMessage << &userMessage << &agentMessage;
   const QString html = HtmlRenderer::render(renderedMessages);
+
+  if (!require(!html.contains("id=\"msg-0\""), "system message gets no id") ||
+      !require(html.contains("id=\"msg-1\" class=\"message user\""), "user message id") ||
+      !require(html.contains("id=\"msg-2\" class=\"message agent\">" +
+                              HtmlRenderer::renderMarkdown(agentMessage.content()) + "</div>"),
+               "agent message id"))
+    return 1;
+
+  if (!require(HtmlRenderer::renderMessageBlock(0, &systemMessage).isEmpty(),
+               "renderMessageBlock excludes system messages") ||
+      !require(HtmlRenderer::renderMessageBlock(1, &userMessage) ==
+                   "<div id=\"msg-1\" class=\"message user\">" +
+                       HtmlRenderer::renderMarkdown(userMessage.content()) + "</div>",
+               "renderMessageBlock matches render() fragment for user message") ||
+      !require(HtmlRenderer::renderMessageBlock(2, &agentMessage) ==
+                   "<div id=\"msg-2\" class=\"message agent\">" +
+                       HtmlRenderer::renderMarkdown(agentMessage.content()) + "</div>",
+               "renderMessageBlock matches render() fragment for agent message"))
+    return 1;
+
+  ChatMessage emptyAgentMessage(ChatMessage::Agent, "");
+  if (!require(HtmlRenderer::renderMessageBlock(3, &emptyAgentMessage) ==
+                   "<div id=\"msg-3\" class=\"message agent\"></div>",
+               "renderMessageBlock handles empty assistant placeholder"))
+    return 1;
+
   if (!require(!html.contains("secret"), "system message filtering") ||
       !require(html.contains("&lt;tag&gt; &amp; text<br>second $x^2$"),
                "escaping and multiline paragraph") ||

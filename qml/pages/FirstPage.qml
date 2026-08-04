@@ -64,6 +64,28 @@ Page {
       Connections {
         target: appModel
         onRenderedDocumentChanged: webView.loadHtml(appModel.renderedDocument, 'about:blank')
+        onMessageAppended: {
+          if (!webView.loaded)
+            return
+          webView.runJavaScript(
+                'var end = document.getElementById("end");' +
+                'if (end) { end.insertAdjacentHTML("beforebegin", ' + JSON.stringify(html) + '); ' +
+                'window.scrollTo(0, document.body.scrollHeight); }')
+        }
+        onMessageContentUpdated: {
+          if (!webView.loaded)
+            return
+          var script =
+              'var el = document.getElementById("msg-' + index + '");' +
+              'if (el) { el.innerHTML = ' + JSON.stringify(html) + '; ' +
+              'window.scrollTo(0, document.body.scrollHeight); '
+          if (finalUpdate)
+            script +=
+                'if (window.MathJax) { MathJax.typesetPromise().then(function() { ' +
+                'window.scrollTo(0, document.body.scrollHeight); }); }'
+          script += ' }'
+          webView.runJavaScript(script)
+        }
       }
 
       onLinkClicked: {

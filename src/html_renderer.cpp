@@ -48,14 +48,7 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
       "</head><body>";
 
   for (int i = 0; i < messages.size(); ++i) {
-    ChatMessage* msg = messages.at(i);
-    if (msg->role() == ChatMessage::System)
-      continue;
-
-    QString roleClass = (msg->role() == ChatMessage::User) ? "user" : "agent";
-    html += QString("<div class=\"message %1\">").arg(roleClass);
-    html += renderMarkdown(msg->content());
-    html += "</div>";
+    html += renderMessageBlock(i, messages.at(i));
   }
 
   html += "<div id=\"end\"></div>";
@@ -69,6 +62,18 @@ QString HtmlRenderer::renderMarkdown(const QString& text) {
     return QString();
 
   return markdown_renderer::to_html(text);
+}
+
+
+QString HtmlRenderer::renderMessageBlock(int index, ChatMessage* message) {
+  if (message->role() == ChatMessage::System)
+    return QString();
+
+  QString roleClass = (message->role() == ChatMessage::User) ? "user" : "agent";
+  QString html = QString("<div id=\"msg-%1\" class=\"message %2\">").arg(index).arg(roleClass);
+  html += renderMarkdown(message->content());
+  html += "</div>";
+  return html;
 }
 
 

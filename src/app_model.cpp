@@ -372,14 +372,22 @@ void AppModel::addUserMessage(const QString& content) {
   Q_EMIT canSendChanged();
   Q_EMIT canClearChanged();
 
+  const int userMessageIndex = m_messages->rowCount() - 1;
+  Q_EMIT messageAppended(userMessageIndex,
+                         HtmlRenderer::renderMessageBlock(userMessageIndex,
+                                                          m_messages->get(userMessageIndex)));
+
   // Add empty assistant message for streaming
   m_assistantMessageIndex = m_messages->rowCount();
   m_messages->add(new ChatMessage(ChatMessage::Agent, ""));
   m_pendingStreamingContent.clear();
+  Q_EMIT messageAppended(m_assistantMessageIndex,
+                         HtmlRenderer::renderMessageBlock(m_assistantMessageIndex,
+                                                          m_messages->get(m_assistantMessageIndex)));
 
   m_api->streamingChat(apiMessages, m_model);
   m_streamingUpdateTimer.start();
-  updateRenderedDocument();
+  refreshRenderedDocumentCache();
 }
 
 
@@ -479,10 +487,12 @@ void AppModel::onStreamingChatReply(const QString& reply) {
 void AppModel::onStreamingChatFinished(const QString& reply, const open_ai_api::Error& error) {
   m_streamingUpdateTimer.stop();
   m_pendingStreamingContent.clear();
-  if (m_assistantMessageIndex >= 0)
+  if (m_assistantMessageIndex >= 0) {
     m_messages->setContent(m_assistantMessageIndex, reply);
-
-  updateRenderedDocument();
+    refreshRenderedDocumentCache();
+    Q_EMIT messageContentUpdated(m_assistantMessageIndex, HtmlRenderer::renderMarkdown(reply),
+                                 true);
+  }
 
   m_busy = false;
   Q_EMIT busyChanged();
@@ -501,20 +511,28 @@ void AppModel::onStreamingUpdateTimeout() {
 
   if (m_assistantMessageIndex != -1) {
     ChatMessage* msg = m_messages->get(m_assistantMessageIndex);
-    if (msg)
+    if (msg) {
       m_messages->setContent(m_assistantMessageIndex,
                              msg->content() + m_pendingStreamingContent);
+      refreshRenderedDocumentCache();
+      Q_EMIT messageContentUpdated(m_assistantMessageIndex,
+                                   HtmlRenderer::renderMarkdown(msg->content()), false);
+    }
   }
   m_pendingStreamingContent.clear();
-  updateRenderedDocument();
 }
 
 
 void AppModel::updateRenderedDocument() {
+  refreshRenderedDocumentCache();
+  Q_EMIT renderedDocumentChanged();
+}
+
+
+void AppModel::refreshRenderedDocumentCache() {
   QList<ChatMessage*> msgs;
   for (int i = 0; i < m_messages->rowCount(); ++i) {
     msgs.append(m_messages->get(i));
   }
   m_renderedDocument = HtmlRenderer::render(msgs);
-  Q_EMIT renderedDocumentChanged();
 }

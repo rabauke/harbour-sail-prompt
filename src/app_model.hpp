@@ -98,6 +98,8 @@ public:
   Q_SIGNAL void exportMessageChanged();
   Q_SIGNAL void renderedDocumentChanged();
   Q_SIGNAL void modelsLoaded(const QStringList& models);
+  Q_SIGNAL void messageAppended(int index, const QString& html);
+  Q_SIGNAL void messageContentUpdated(int index, const QString& html, bool finalUpdate);
 
 private:
   Q_SLOT void onGetModelsFinished(const QList<open_ai_api::Model>& models,
@@ -110,6 +112,7 @@ private:
   void loadConfig();
   void saveConfig() const;
   void setExportFailure(const QString& error);
+  void refreshRenderedDocumentCache();
 
   QString m_version{QString::fromStdString(project_version)};
   QString m_baseUrl;

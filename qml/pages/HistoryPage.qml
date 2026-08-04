@@ -10,7 +10,7 @@ Page {
 
   function openSession(idx) {
     appModel.loadSession(idx)
-    pageStack.pop()
+    pageStack.navigateBack()
   }
 
   DateTimeFormater {

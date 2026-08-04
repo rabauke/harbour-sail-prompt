@@ -40,11 +40,6 @@ Page {
         onClicked: appModel.exportToPdf()
       }
       MenuItem {
-        text: qsTr('History')
-        enabled: !appModel.busy
-        onClicked: pageStack.push(Qt.resolvedUrl('HistoryPage.qml'))
-      }
-      MenuItem {
         text: qsTr('New Chat')
         enabled: !appModel.busy
         onClicked: appModel.newChat()
@@ -208,4 +203,10 @@ Page {
   }
 
   Component.onCompleted: guidanceTimer.start()
+
+  onStatusChanged: {
+    if (status === PageStatus.Active) {
+      pageStack.pushAttached(Qt.resolvedUrl('HistoryPage.qml'))
+    }
+  }
 }

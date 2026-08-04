@@ -5,6 +5,10 @@ Icon=harbour-sail-prompt
 Exec=harbour-sail-prompt
 Name=Sail Prompt
 Name[de]=Sail Prompt
+Name[en]=Sail Prompt
+Name[es]=Sail Prompt
+Name[fr]=Sail Prompt
+Name[sv]=Sail Prompt
 
 [X-Sailjail]
 Permissions=Internet;UserDirs;WebView

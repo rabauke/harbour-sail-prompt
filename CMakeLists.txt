@@ -34,6 +34,10 @@ find_program(LRELEASE_EXECUTABLE lrelease REQUIRED)
 set(TS_FILES
     translations/harbour-sail-prompt.ts
     translations/harbour-sail-prompt-de.ts
+    translations/harbour-sail-prompt-en.ts
+    translations/harbour-sail-prompt-es.ts
+    translations/harbour-sail-prompt-fr.ts
+    translations/harbour-sail-prompt-sv.ts
 )
 set(QM_FILES)
 foreach(TS_FILE ${TS_FILES})

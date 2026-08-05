@@ -84,24 +84,24 @@ int main(int argc, char *argv[]) {
   if (!require(!html.contains("id=\"msg-0\""), "system message gets no id") ||
       !require(html.contains("id=\"msg-1\" class=\"message user\""), "user message id") ||
       !require(html.contains("id=\"msg-2\" class=\"message agent\">" +
-                              HtmlRenderer::renderMarkdown(agentMessage.content()) + "</div>"),
+                              HtmlRenderer::render_markdown(agentMessage.content()) + "</div>"),
                "agent message id"))
     return 1;
 
-  if (!require(HtmlRenderer::renderMessageBlock(0, &systemMessage).isEmpty(),
+  if (!require(HtmlRenderer::render_message_block(0, &systemMessage).isEmpty(),
                "renderMessageBlock excludes system messages") ||
-      !require(HtmlRenderer::renderMessageBlock(1, &userMessage) ==
+      !require(HtmlRenderer::render_message_block(1, &userMessage) ==
                    "<div id=\"msg-1\" class=\"message user\">" +
-                       HtmlRenderer::renderMarkdown(userMessage.content()) + "</div>",
+                       HtmlRenderer::render_markdown(userMessage.content()) + "</div>",
                "renderMessageBlock matches render() fragment for user message") ||
-      !require(HtmlRenderer::renderMessageBlock(2, &agentMessage) ==
+      !require(HtmlRenderer::render_message_block(2, &agentMessage) ==
                    "<div id=\"msg-2\" class=\"message agent\">" +
-                       HtmlRenderer::renderMarkdown(agentMessage.content()) + "</div>",
+                       HtmlRenderer::render_markdown(agentMessage.content()) + "</div>",
                "renderMessageBlock matches render() fragment for agent message"))
     return 1;
 
   ChatMessage emptyAgentMessage(ChatMessage::Agent, "");
-  if (!require(HtmlRenderer::renderMessageBlock(3, &emptyAgentMessage) ==
+  if (!require(HtmlRenderer::render_message_block(3, &emptyAgentMessage) ==
                    "<div id=\"msg-3\" class=\"message agent\"></div>",
                "renderMessageBlock handles empty assistant placeholder"))
     return 1;

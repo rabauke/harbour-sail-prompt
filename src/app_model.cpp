@@ -374,7 +374,7 @@ void AppModel::addUserMessage(const QString& content) {
 
   const int userMessageIndex = m_messages->rowCount() - 1;
   Q_EMIT messageAppended(userMessageIndex,
-                         HtmlRenderer::renderMessageBlock(userMessageIndex,
+                         HtmlRenderer::render_message_block(userMessageIndex,
                                                           m_messages->get(userMessageIndex)));
 
   // Add empty assistant message for streaming
@@ -382,7 +382,7 @@ void AppModel::addUserMessage(const QString& content) {
   m_messages->add(new ChatMessage(ChatMessage::Agent, ""));
   m_pendingStreamingContent.clear();
   Q_EMIT messageAppended(m_assistantMessageIndex,
-                         HtmlRenderer::renderMessageBlock(m_assistantMessageIndex,
+                         HtmlRenderer::render_message_block(m_assistantMessageIndex,
                                                           m_messages->get(m_assistantMessageIndex)));
 
   m_api->streamingChat(apiMessages, m_model);
@@ -490,7 +490,7 @@ void AppModel::onStreamingChatFinished(const QString& reply, const open_ai_api::
   if (m_assistantMessageIndex >= 0) {
     m_messages->setContent(m_assistantMessageIndex, reply);
     refreshRenderedDocumentCache();
-    Q_EMIT messageContentUpdated(m_assistantMessageIndex, HtmlRenderer::renderMarkdown(reply),
+    Q_EMIT messageContentUpdated(m_assistantMessageIndex, HtmlRenderer::render_markdown(reply),
                                  true);
   }
 
@@ -516,7 +516,7 @@ void AppModel::onStreamingUpdateTimeout() {
                              msg->content() + m_pendingStreamingContent);
       refreshRenderedDocumentCache();
       Q_EMIT messageContentUpdated(m_assistantMessageIndex,
-                                   HtmlRenderer::renderMarkdown(msg->content()), false);
+                                   HtmlRenderer::render_markdown(msg->content()), false);
     }
   }
   m_pendingStreamingContent.clear();

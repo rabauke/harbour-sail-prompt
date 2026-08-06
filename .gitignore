@@ -1,3 +1,2 @@
 *.user
-.codegraph
-.junie
+.sfdk/**

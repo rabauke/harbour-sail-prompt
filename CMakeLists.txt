@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(harbour-sail-prompt VERSION 0.1.0 LANGUAGES CXX C)
 
-find_package (Qt5 COMPONENTS Core Network Qml Gui Quick PrintSupport REQUIRED)
+find_package (Qt5 COMPONENTS Core Network Qml Gui Quick REQUIRED)
 
 include(FindPkgConfig)
 pkg_search_module(SAILFISH sailfishapp REQUIRED)
@@ -64,7 +64,7 @@ add_executable(harbour-sail-prompt
     src/app_model.cpp
     src/html_renderer.cpp
     src/markdown_renderer.cpp
-    src/pdf_exporter.cpp
+    src/markdown_exporter.cpp
     src/session_store.cpp
     src/session_list_model.cpp
     src/date_time_formater.hpp
@@ -84,7 +84,6 @@ target_link_libraries(harbour-sail-prompt
     md4c
     Qt5::Quick
     Qt5::Network
-    Qt5::PrintSupport
     ${SAILFISH_LDFLAGS}
 )
 
@@ -103,7 +102,6 @@ target_link_libraries(test_app_model
     md4c
     Qt5::Core
     Qt5::Network
-    Qt5::PrintSupport
     Qt5::Gui
 )
 
@@ -117,18 +115,6 @@ target_link_libraries(test_session_store
     Qt5::Core
 )
 
-add_executable(test_pdf_export
-    src/test_pdf_export.cpp
-    src/chat_message.cpp
-    src/html_renderer.cpp
-    src/markdown_renderer.cpp
-    src/pdf_exporter.cpp
-)
-target_link_libraries(test_pdf_export
-    md4c
-    Qt5::Gui
-    Qt5::PrintSupport
-)
 
 install(TARGETS harbour-sail-prompt
     RUNTIME DESTINATION bin

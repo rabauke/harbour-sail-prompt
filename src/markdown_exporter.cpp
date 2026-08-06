@@ -1,15 +1,12 @@
-#include "pdf_exporter.hpp"
+#include "markdown_exporter.hpp"
 #include "chat_message.hpp"
-#include "html_renderer.hpp"
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QPrinter>
 #include <QStandardPaths>
-#include <QTextDocument>
+#include <QTextStream>
 
-
-QString PdfExporter::sanitizeTitle(const QString& title) {
+QString MarkdownExporter::sanitizeTitle(const QString& title) {
   QString result;
   const QString simplified = title.simplified();
   for (int i = 0; i < simplified.length(); ++i) {
@@ -25,21 +22,22 @@ QString PdfExporter::sanitizeTitle(const QString& title) {
   return result.isEmpty() ? QString("chat") : result.left(50);
 }
 
-
-QString PdfExporter::outputPath(const QString& outputDirectory, const QString& title,
-                                const QDateTime& timestamp) {
+QString MarkdownExporter::outputPath(const QString& outputDirectory, const QString& title,
+                                    const QDateTime& timestamp) {
   const QDir directory(outputDirectory);
   const QString base = sanitizeTitle(title) + "_" + timestamp.toString("yyyyMMdd_HHmmss");
-  QString path = directory.absoluteFilePath(base + ".pdf");
+  QString path = directory.absoluteFilePath(base + ".md");
   int suffix = 2;
   while (QFile::exists(path)) {
-    path = directory.absoluteFilePath(base + QString("_%1.pdf").arg(suffix++));
+    path = directory.absoluteFilePath(base + QString("_%1.md").arg(suffix++));
   }
   return path;
 }
 
+MarkdownExporter::Result MarkdownExporter::exportMessages(const QList<ChatMessage*>& messages,
+                                                           const QString& outputDirectory) {
+  Result result = {false, QString(), QString()};
 
-QString PdfExporter::htmlForMessages(const QList<ChatMessage*>& messages, QString* error) {
   QList<ChatMessage*> exportMessages;
   bool hasUserMessage = false;
   for (int i = 0; i < messages.size(); ++i) {
@@ -51,23 +49,7 @@ QString PdfExporter::htmlForMessages(const QList<ChatMessage*>& messages, QStrin
     exportMessages.append(message);
   }
   if (not hasUserMessage) {
-    if (error)
-      *error = "A conversation must contain a user message before it can be exported";
-    return QString();
-  }
-  if (error)
-    error->clear();
-  return HtmlRenderer::render(exportMessages);
-}
-
-
-PdfExporter::Result PdfExporter::exportMessages(const QList<ChatMessage*>& messages,
-                                                const QString& outputDirectory) {
-  Result result = {false, QString(), QString()};
-  QString htmlError;
-  const QString html = htmlForMessages(messages, &htmlError);
-  if (html.isEmpty()) {
-    result.error = htmlError;
+    result.error = "A conversation must contain a user message before it can be exported";
     return result;
   }
 
@@ -84,12 +66,12 @@ PdfExporter::Result PdfExporter::exportMessages(const QList<ChatMessage*>& messa
 
   QFileInfo destination(directoryPath);
   if (destination.exists() and not destination.isDir()) {
-    result.error = "The PDF destination is not a directory";
+    result.error = "The Markdown destination is not a directory";
     return result;
   }
   QDir directory;
   if (not directory.mkpath(directoryPath)) {
-    result.error = "Could not create the PDF destination directory";
+    result.error = "Could not create the Markdown destination directory";
     return result;
   }
 
@@ -101,23 +83,32 @@ PdfExporter::Result PdfExporter::exportMessages(const QList<ChatMessage*>& messa
     }
   }
   const QString path = outputPath(directoryPath, title);
-  QTextDocument document;
-  document.setHtml(html);
-  QPrinter printer(QPrinter::HighResolution);
-  printer.setOutputFormat(QPrinter::PdfFormat);
-  printer.setOutputFileName(path);
-  printer.setPageMargins(15, 15, 15, 15, QPrinter::Millimeter);
-  document.print(&printer);
 
   QFile file(path);
-  if (not file.exists() or not file.open(QIODevice::ReadOnly) or file.size() == 0 or
-      not file.read(4).startsWith("%PDF")) {
-    file.close();
-    QFile::remove(path);
-    result.error = "Failed to create a valid PDF file";
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    result.error = "Failed to create the Markdown file";
     return result;
   }
+  QTextStream out(&file);
+  out.setCodec("UTF-8");
+
+  for (int i = 0; i < exportMessages.size(); ++i) {
+    ChatMessage* m = exportMessages.at(i);
+    if (m->role() == ChatMessage::User) {
+      out << "### User\n\n" << m->content() << "\n\n";
+    } else if (m->role() == ChatMessage::Agent) {
+      out << "### Assistant\n\n" << m->content() << "\n\n";
+    }
+  }
+  out.flush();
   file.close();
+
+  QFile verify(path);
+  if (!verify.exists() || verify.size() == 0) {
+    result.error = "Failed to write Markdown file";
+    return result;
+  }
+
   result.success = true;
   result.path = path;
   return result;

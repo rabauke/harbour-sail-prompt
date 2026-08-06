@@ -1,6 +1,6 @@
 #include "app_model.hpp"
 #include "html_renderer.hpp"
-#include "pdf_exporter.hpp"
+#include "markdown_exporter.hpp"
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QUrl>
@@ -267,13 +267,13 @@ void AppModel::newChat() {
 }
 
 
-void AppModel::exportToPdf() {
+void AppModel::exportToMarkdown() {
   if (m_busy) {
     setExportFailure(tr("Cannot export while a response is streaming"));
     return;
   }
   if (m_exporting) {
-    setExportFailure(tr("A PDF export is already in progress"));
+    setExportFailure(tr("A Markdown export is already in progress"));
     return;
   }
 
@@ -292,14 +292,14 @@ void AppModel::exportToPdf() {
   for (int i = 0; i < m_messages->rowCount(); ++i) {
     msgs.append(m_messages->get(i));
   }
-  const PdfExporter::Result result = PdfExporter::exportMessages(msgs);
+  const MarkdownExporter::Result result = MarkdownExporter::exportMessages(msgs);
   if (not result.success) {
     setExportFailure(result.error);
     return;
   }
   m_exportSuccess = true;
   m_exportPath = result.path;
-  m_exportMessage = tr("PDF exported to %1").arg(result.path);
+  m_exportMessage = tr("Markdown exported to %1").arg(result.path);
   m_exporting = false;
   Q_EMIT exportingChanged();
   Q_EMIT exportSuccessChanged();

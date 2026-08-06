@@ -1,12 +1,11 @@
 Name:       harbour-sail-prompt
 
-Summary:    Conversational AI assistant with PDF export
+Summary:    Conversational AI assistant with Markdown export
 Version:    0.1
 Release:    1
 License:    BSD-3-Clause
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   sailfishsilica-qt5 >= 0.10.9
-Requires:   qt5-qtprintsupport
 Requires:   sailfish-components-webview-qt5
 BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
 BuildRequires:  pkgconfig(Qt5Core)
@@ -14,7 +13,6 @@ BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Gui)
 BuildRequires:  pkgconfig(Qt5Network)
-BuildRequires:  pkgconfig(Qt5PrintSupport)
 BuildRequires:  desktop-file-utils
 BuildRequires:  cmake
 

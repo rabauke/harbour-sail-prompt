@@ -33,13 +33,13 @@
     </message>
     <message>
         <location filename="../src/app_model.cpp" line="276"/>
-        <source>A PDF export is already in progress</source>
-        <translation>A PDF export is already in progress</translation>
+        <source>A Markdown export is already in progress</source>
+        <translation>A Markdown export is already in progress</translation>
     </message>
     <message>
         <location filename="../src/app_model.cpp" line="302"/>
-        <source>PDF exported to %1</source>
-        <translation>PDF exported to %1</translation>
+        <source>Markdown exported to %1</source>
+        <translation>Markdown exported to %1</translation>
     </message>
 </context>
 <context>
@@ -94,8 +94,8 @@
     </message>
     <message>
         <location filename="../qml/pages/FirstPage.qml" line="38"/>
-        <source>Export to PDF</source>
-        <translation>Export to PDF</translation>
+        <source>Export as Markdown</source>
+        <translation>Export as Markdown</translation>
     </message>
 </context>
 <context>

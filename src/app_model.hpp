@@ -50,7 +50,7 @@ public:
   Q_INVOKABLE void markSettingsGuidanceShown();
   Q_INVOKABLE void loadSession(int index);
   Q_INVOKABLE void newChat();
-  Q_INVOKABLE void exportToPdf();
+  Q_INVOKABLE void exportToMarkdown();
 
   QString baseUrl() const;
   void setBaseUrl(const QString& baseUrl);

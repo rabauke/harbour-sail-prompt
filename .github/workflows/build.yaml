@@ -4,7 +4,7 @@ on:
   [push, workflow_dispatch]
 
 env:
-  OS_VERSION: 5.0.0.43
+  OS_VERSION: 5.2.0.15
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
       matrix:
         arch: ['armv7hl', 'aarch64', 'i486']
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Prepare
       run: mkdir RPMS
     - name: Build ${{ matrix.arch }}
@@ -29,7 +29,7 @@ jobs:
         release: ${{ env.OS_VERSION }}
         arch: ${{ matrix.arch }}
     - name: Upload RPM ${{ matrix.arch }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: RPM-build-results-SFOS-${{ env.OS_VERSION }}-${{ matrix.arch }}
         path: RPMS/
@@ -42,17 +42,17 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Download armv7hl
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: RPM-build-results-SFOS-${{ env.OS_VERSION }}-armv7hl
         continue-on-error: true
       - name: Download aarch64
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: RPM-build-results-SFOS-${{ env.OS_VERSION }}-aarch64
         continue-on-error: true
       - name: Download i486
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: RPM-build-results-SFOS-${{ env.OS_VERSION }}-i486
         continue-on-error: true

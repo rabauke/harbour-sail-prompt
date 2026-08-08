@@ -4,6 +4,8 @@ Sail Prompt is a conversational AI chat application for [Sailfish OS](https://sa
 any OpenAI-compatible chat completion API, renders responses as Markdown and lets you export conversations
 to Markdown files.
 
+<img src="https://raw.githubusercontent.com/rabauke/harbour-sail-prompt/refs/heads/main/images/screenshot.png" width="480" alt="Sail Prompt screenshot"> 
+
 ## Features
 
 - Chat with any OpenAI-compatible chat completion endpoint (base URL, API key and model are configurable).

@@ -1,9 +1,9 @@
 Name:       harbour-sail-prompt
 
 Summary:    Conversational AI assistant with Markdown export
-Version:    0.1
+Version:    0.1.0
 Release:    1
-License:    BSD-3-Clause
+License:    GPL-2.0-or-later
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   sailfishsilica-qt5 >= 0.10.9
 Requires:   sailfish-components-webview-qt5

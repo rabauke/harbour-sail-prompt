@@ -23,6 +23,11 @@
         <source>External components</source>
         <translation>Componentes externos</translation>
     </message>
+    <message>
+        <location filename="../qml/pages/About.qml" line="94"/>
+        <source>Compatible LLM providers</source>
+        <translation>Proveedores de LLM compatibles</translation>
+    </message>
 </context>
 <context>
     <name>AppModel</name>
@@ -78,17 +83,17 @@
         <translation>Acerca de Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="89"/>
+        <location filename="../qml/pages/FirstPage.qml" line="111"/>
         <source>Welcome to Sail Prompt</source>
         <translation>Bienvenido a Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="90"/>
+        <location filename="../qml/pages/FirstPage.qml" line="112"/>
         <source>Please configure your API settings to start chatting.</source>
         <translation>Configura los ajustes de la API para empezar a chatear.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="108"/>
+        <location filename="../qml/pages/FirstPage.qml" line="130"/>
         <source>Type a message...</source>
         <translation>Escribe un mensaje...</translation>
     </message>
@@ -152,77 +157,77 @@
         <translation>https://api.openai.com/v1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="49"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
         <source>API Key</source>
         <translation>Clave API</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
         <source>sk-...</source>
         <translation>sk-...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="61"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
         <source>The API key is stored in the application settings and is not encrypted.</source>
         <translation>La clave API se almacena en los ajustes de la aplicación y no está cifrada.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="67"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="69"/>
         <source>System Prompt</source>
         <translation>Prompt del sistema</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="68"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="70"/>
         <source>You are a helpful assistant.</source>
         <translation>Eres un asistente útil.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="73"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="75"/>
         <source>Loading models...</source>
         <translation>Cargando modelos...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="73"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="75"/>
         <source>Refresh Models</source>
         <translation>Actualizar modelos</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="85"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="87"/>
         <source>Refresh models to select</source>
         <translation>Actualiza los modelos para seleccionar uno</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="84"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="86"/>
         <source>Model</source>
         <translation>Modelo</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="105"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="107"/>
         <source>Configuration State</source>
         <translation>Estado de la configuración</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="109"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="111"/>
         <source>Configured</source>
         <translation>Configurado</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="112"/>
         <source>Yes</source>
         <translation>Sí</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="112"/>
         <source>No</source>
         <translation>No</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="114"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="116"/>
         <source>Model Selected</source>
         <translation>Modelo seleccionado</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="115"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="117"/>
         <source>None</source>
         <translation>Ninguno</translation>
     </message>

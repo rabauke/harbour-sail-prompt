@@ -41,6 +41,7 @@ Page {
         inputMethodHints: Qt.ImhUrlCharactersOnly
         EnterKey.iconSource: 'image://theme/icon-m-enter-next'
         EnterKey.onClicked: apiKeyField.focus = true
+        validator: RegExpValidator { regExp: /\S+/ }
       }
 
       PasswordField {
@@ -50,6 +51,7 @@ Page {
         placeholderText: qsTr('sk-...')
         EnterKey.iconSource: 'image://theme/icon-m-enter-next'
         EnterKey.onClicked: systemPromptField.focus = true
+        validator: RegExpValidator { regExp: /\S+/ }
       }
 
       Label {

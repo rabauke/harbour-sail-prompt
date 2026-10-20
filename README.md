@@ -39,10 +39,17 @@ The project depends on:
 
 Open the settings page in the app to configure:
 
-- **Base URL** — the OpenAI-compatible API endpoint (e.g. `https://api.openai.com/v1`).
+- **Base URL** — the OpenAI-compatible chat completion API base url.
 - **API Key** — your API key (stored unencrypted in the application settings).
 - **System Prompt** — an optional system prompt sent with every conversation.
 - **Model** — select from the models available on the configured endpoint.
+
+The OpenAI chat completion API has been adapted also by other LLM providers. Here a list of base urls of some popular providers:
+
+- **OpenAI:** `https://api.openai.com/v1`
+- **Open Router:** `https://openrouter.ai/api/v1`
+- **Mistral:** `https://api.mistral.ai/v1`
+- **Mamuth.ai:** `https://api.mammouth.ai/v1`
 
 ## Third-Party Components
 

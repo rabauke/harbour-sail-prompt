@@ -90,6 +90,21 @@ Page {
         license: 'LGPL-2.1-only'
         url: 'https://github.com/sailfishos/libsailfishapp'
       }
+      SectionHeader {
+        text: qsTr('Compatible LLM providers')
+      }
+      Label {
+        x: Theme.horizontalPageMargin
+        width: column.width - 2 * x
+        color: Theme.primaryColor
+        text: '<dl>' +
+              '<dt><b>OpenAI</b></dt><dd>https://api.openai.com/v1</dd>' +
+              '<dt><b>Open Router</b></dt><dd>https://openrouter.ai/api/v1</dd>' +
+              '<dt><b>Mistral</b></dt><dd>https://api.mistral.ai/v1</dd>' +
+              '<dt><b>Mammouth.AI</b></dt><dd>https://api.mammouth.ai/v1</dd>' +
+              '</dl>'
+        textFormat: Text.RichText
+      }
     }
   }
 }

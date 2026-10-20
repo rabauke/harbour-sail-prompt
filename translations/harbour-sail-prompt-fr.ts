@@ -23,13 +23,18 @@
         <source>External components</source>
         <translation>Composants tiers</translation>
     </message>
+    <message>
+        <location filename="../qml/pages/About.qml" line="94"/>
+        <source>Compatible LLM providers</source>
+        <translation>Fournisseurs de LLM compatibles</translation>
+    </message>
 </context>
 <context>
     <name>AppModel</name>
     <message>
         <location filename="../src/app_model.cpp" line="272"/>
         <source>Cannot export while a response is streaming</source>
-        <translation>Impossible d'exporter pendant la réception d'une réponse</translation>
+        <translation>Impossible d&apos;exporter pendant la réception d&apos;une réponse</translation>
     </message>
     <message>
         <location filename="../src/app_model.cpp" line="276"/>
@@ -78,17 +83,17 @@
         <translation>À propos de Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="89"/>
+        <location filename="../qml/pages/FirstPage.qml" line="111"/>
         <source>Welcome to Sail Prompt</source>
         <translation>Bienvenue dans Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="90"/>
+        <location filename="../qml/pages/FirstPage.qml" line="112"/>
         <source>Please configure your API settings to start chatting.</source>
         <translation>Veuillez configurer vos paramètres API pour commencer à discuter.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="108"/>
+        <location filename="../qml/pages/FirstPage.qml" line="130"/>
         <source>Type a message...</source>
         <translation>Écrire un message...</translation>
     </message>
@@ -152,77 +157,77 @@
         <translation>https://api.openai.com/v1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="49"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
         <source>API Key</source>
         <translation>Clé API</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
         <source>sk-...</source>
         <translation>sk-...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="61"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
         <source>The API key is stored in the application settings and is not encrypted.</source>
-        <translation>La clé API est stockée dans les paramètres de l'application et n'est pas chiffrée.</translation>
+        <translation>La clé API est stockée dans les paramètres de l&apos;application et n&apos;est pas chiffrée.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="67"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="69"/>
         <source>System Prompt</source>
         <translation>Prompt système</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="68"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="70"/>
         <source>You are a helpful assistant.</source>
         <translation>Tu es un assistant utile.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="73"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="75"/>
         <source>Loading models...</source>
         <translation>Chargement des modèles...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="73"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="75"/>
         <source>Refresh Models</source>
         <translation>Actualiser les modèles</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="85"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="87"/>
         <source>Refresh models to select</source>
         <translation>Actualisez les modèles pour en sélectionner un</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="84"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="86"/>
         <source>Model</source>
         <translation>Modèle</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="105"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="107"/>
         <source>Configuration State</source>
         <translation>État de la configuration</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="109"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="111"/>
         <source>Configured</source>
         <translation>Configuré</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="112"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="110"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="112"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="114"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="116"/>
         <source>Model Selected</source>
         <translation>Modèle sélectionné</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="115"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="117"/>
         <source>None</source>
         <translation>Aucun</translation>
     </message>

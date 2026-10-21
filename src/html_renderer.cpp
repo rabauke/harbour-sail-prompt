@@ -14,12 +14,12 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
         color: #E0E0E0;
         background-color: #1a1a1a;
         margin: 0;
-        padding: 16px;
+        padding: 12px;
         line-height: 1.5;
       }
       .message {
         margin-bottom: 16px;
-        padding: 12px 16px;
+        padding: 8px 12px;
         border-radius: 16px;
         word-wrap: break-word;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);

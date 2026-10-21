@@ -16,19 +16,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/external)
 
 add_custom_command(OUTPUT
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c.c
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c-html.c
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/entity.c
-    COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_SOURCE_DIR}/external/md4c-release-0.5.3.tar.gz
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/md4c.c
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/md4c-html.c
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/entity.c
+    COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_SOURCE_DIR}/external/md4c-0.6.0.tar.gz
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/external)
 
 add_library(md4c STATIC
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c.c
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/md4c-html.c
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/entity.c
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/md4c.c
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/md4c-html.c
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/entity.c
 )
 set_target_properties(md4c PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_include_directories(md4c PUBLIC ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/)
+target_include_directories(md4c PUBLIC ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/)
 
 find_program(LRELEASE_EXECUTABLE lrelease REQUIRED)
 set(TS_FILES
@@ -78,7 +78,7 @@ target_include_directories(harbour-sail-prompt PRIVATE
     ${SAILFISH_INCLUDE_DIRS}
 >
     ${CMAKE_BINARY_DIR}/src
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/
 )
 target_link_libraries(harbour-sail-prompt
     md4c
@@ -96,7 +96,7 @@ add_executable(test_app_model
     src/chat_message_list_model.cpp
 )
 target_include_directories(test_app_model PRIVATE
-    ${CMAKE_BINARY_DIR}/external/md4c-release-0.5.3/src/
+    ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/
 )
 target_link_libraries(test_app_model
     md4c

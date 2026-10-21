@@ -71,8 +71,8 @@ Page {
         text: qsTr('External components')
       }
       ThirdPartyComponent {
-        componnet: 'md4c'
-        version: '0.5.3'
+        componnet: 'MD4C'
+        version: '0.6.0'
         license: 'MIT License'
         url: 'https://github.com/mity/md4c'
       }

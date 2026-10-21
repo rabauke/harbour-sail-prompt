@@ -113,6 +113,20 @@ Page {
       }
 
       SectionHeader {
+        text: qsTr('Web view')
+      }
+      Slider {
+        width: parent.width
+        minimumValue: 8
+        maximumValue: 32
+        stepSize: 1
+        value: appModel.webViewFontSize
+        valueText: Math.round(value) + ' px'
+        label: qsTr('Font size')
+        onValueChanged: appModel.webViewFontSize = Math.round(value)
+      }
+
+      SectionHeader {
         text: qsTr('Configuration State')
       }
       DetailItem {

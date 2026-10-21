@@ -80,8 +80,11 @@ int main(int argc, char* argv[]) {
   QList<ChatMessage*> renderedMessages;
   renderedMessages << &systemMessage << &userMessage << &agentMessage;
   const QString html{HtmlRenderer::render(renderedMessages)};
+  const QString largerFontHtml{HtmlRenderer::render(renderedMessages, 24)};
 
   if (!require(!html.contains("id=\"msg-0\""), "system message gets no id") ||
+      !require(html.contains("font-size: 16px;"), "default web view font size") ||
+      !require(largerFontHtml.contains("font-size: 24px;"), "configured web view font size") ||
       !require(html.contains("id=\"msg-1\" class=\"message user\""), "user message id") ||
       !require(html.contains("id=\"msg-2\" class=\"message agent\">" +
                              HtmlRenderer::render_markdown(agentMessage.content()) + "</div>"),

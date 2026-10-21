@@ -134,6 +134,22 @@ void AppModel::setSystemPrompt(const QString& systemPrompt) {
 }
 
 
+int AppModel::webViewFontSize() const {
+  return m_webViewFontSize;
+}
+
+
+void AppModel::setWebViewFontSize(const int fontSize) {
+  const int boundedFontSize{qBound(8, fontSize, 32)};
+  if (m_webViewFontSize != boundedFontSize) {
+    m_webViewFontSize = boundedFontSize;
+    Q_EMIT webViewFontSizeChanged();
+    saveConfig();
+    updateRenderedDocument();
+  }
+}
+
+
 ChatMessageListModel* AppModel::messages() const {
   return m_messages;
 }
@@ -434,6 +450,7 @@ void AppModel::loadConfig() {
   m_apiKey = m_settings.value("apiKey", "").toString();
   m_model = m_settings.value("model", "").toString();
   m_systemPrompt = m_settings.value("systemPrompt", "").toString();
+  m_webViewFontSize = qBound(8, m_settings.value("webViewFontSize", 16).toInt(), 32);
   m_models = m_settings.value("models", QStringList{}).toStringList();
   m_settingsGuidanceShown = m_settings.value("settingsGuidanceShown", false).toBool();
   if (not m_models.contains(m_model))
@@ -449,6 +466,7 @@ void AppModel::saveConfig() const {
   m_settings.setValue("apiKey", m_apiKey);
   m_settings.setValue("model", m_model);
   m_settings.setValue("systemPrompt", m_systemPrompt);
+  m_settings.setValue("webViewFontSize", m_webViewFontSize);
   m_settings.setValue("models", m_models);
   m_settings.sync();
 }
@@ -535,5 +553,5 @@ void AppModel::refreshRenderedDocumentCache() {
   for (int i{0}; i < m_messages->rowCount(); ++i) {
     msgs.append(m_messages->get(i));
   }
-  m_renderedDocument = HtmlRenderer::render(msgs);
+  m_renderedDocument = HtmlRenderer::render(msgs, m_webViewFontSize);
 }

@@ -7,7 +7,7 @@
 
 class HtmlRenderer {
 public:
-  [[nodiscard]] static QString render(const QList<ChatMessage*>& messages);
+  [[nodiscard]] static QString render(const QList<ChatMessage*>& messages, int fontSize = 16);
   [[nodiscard]] static QString render_markdown(const QString& text);
   [[nodiscard]] static QString render_message_block(int index, const ChatMessage* message);
 

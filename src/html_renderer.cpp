@@ -2,7 +2,7 @@
 #include "markdown_renderer.hpp"
 
 
-QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
+QString HtmlRenderer::render(const QList<ChatMessage*>& messages, const int fontSize) {
   QString html{
       R"(
 <html>
@@ -11,6 +11,7 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
       <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: %1px;
         color: #E0E0E0;
         background-color: #1a1a1a;
         margin: 0;
@@ -89,6 +90,7 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </head>
   <body>)"};
+  html = html.arg(qBound(8, fontSize, 32));
 
   for (int i{0}; i < messages.size(); ++i)
     html += render_message_block(i, messages.at(i));

@@ -207,6 +207,16 @@
         <translation>Modèle</translation>
     </message>
     <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="80"/>
+        <source>Web view</source>
+        <translation>Vue web</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="90"/>
+        <source>Font size</source>
+        <translation>Taille de police</translation>
+    </message>
+    <message>
         <location filename="../qml/pages/SettingsPage.qml" line="107"/>
         <source>Configuration State</source>
         <translation>État de la configuration</translation>

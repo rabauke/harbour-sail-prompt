@@ -25,6 +25,8 @@ public:
   Q_PROPERTY(QStringList models READ models NOTIFY modelsChanged)
   Q_PROPERTY(
       QString systemPrompt READ systemPrompt WRITE setSystemPrompt NOTIFY systemPromptChanged)
+  Q_PROPERTY(int webViewFontSize READ webViewFontSize WRITE setWebViewFontSize NOTIFY
+                 webViewFontSizeChanged)
   Q_PROPERTY(ChatMessageListModel* messages READ messages CONSTANT)
   Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
   Q_PROPERTY(bool configured READ configured NOTIFY configuredChanged)
@@ -61,6 +63,8 @@ public:
   QStringList models() const;
   QString systemPrompt() const;
   void setSystemPrompt(const QString& systemPrompt);
+  int webViewFontSize() const;
+  void setWebViewFontSize(int fontSize);
   ChatMessageListModel* messages() const;
   bool busy() const;
   bool configured() const;
@@ -84,6 +88,7 @@ public:
   Q_SIGNAL void modelChanged(const QString& model);
   Q_SIGNAL void modelsChanged();
   Q_SIGNAL void systemPromptChanged(const QString& systemPrompt);
+  Q_SIGNAL void webViewFontSizeChanged();
   Q_SIGNAL void busyChanged();
   Q_SIGNAL void errorOccurred(const QString& message);
   Q_SIGNAL void configuredChanged();
@@ -120,6 +125,7 @@ private:
   QString m_model;
   QStringList m_models;
   QString m_systemPrompt;
+  int m_webViewFontSize{16};
   ChatMessageListModel* m_messages;
   open_ai_api::OpenAiApi* m_api;
   bool m_busy;

@@ -66,7 +66,7 @@
     </message>
 </context>
 <context>
-    <name>FirstPage</name>
+    <name>MainPage</name>
     <message>
         <location filename="../qml/pages/MainPage.qml" line="34"/>
         <source>Settings</source>

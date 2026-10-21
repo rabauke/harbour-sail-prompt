@@ -4,7 +4,7 @@ import '../components'
 
 
 Page {
-  id: about_page
+  id: aboutPage
 
   allowedOrientations: Orientation.All
 
@@ -16,7 +16,8 @@ Page {
       id: column
 
       width: parent.width
-      spacing: 0
+      spacing: Theme.paddingMedium
+
       PageHeader {
         title: 'Sail Prompt v' + appModel.version
       }
@@ -28,6 +29,7 @@ Page {
         font.pixelSize: Theme.fontSizeMedium
         text: qsTr('_description_')
       }
+
       SectionHeader {
         text: qsTr('Copyright')
       }
@@ -39,6 +41,7 @@ Page {
         font.pixelSize: Theme.fontSizeMedium
         text: '© Heiko Bauke, 2026'
       }
+
       SectionHeader {
         text: qsTr('License')
       }
@@ -63,6 +66,7 @@ Page {
         }
         text: '<br>Fork me on <a href=\"https://github.com/rabauke/harbour-sail-prompt\">github</a>!'
       }
+
       SectionHeader {
         text: qsTr('External components')
       }
@@ -90,6 +94,7 @@ Page {
         license: 'LGPL-2.1-only'
         url: 'https://github.com/sailfishos/libsailfishapp'
       }
+
       SectionHeader {
         text: qsTr('Compatible LLM providers')
       }

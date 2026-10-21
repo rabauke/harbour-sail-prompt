@@ -147,6 +147,11 @@
         <translation>Settings</translation>
     </message>
     <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="40"/>
+        <source>LLM provider</source>
+        <translation>LLM provider</translation>
+    </message>
+    <message>
         <location filename="../qml/pages/SettingsPage.qml" line="39"/>
         <source>Base URL</source>
         <translation>Base URL</translation>
@@ -158,8 +163,8 @@
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="50"/>
-        <source>API Key</source>
-        <translation>API Key</translation>
+        <source>API key</source>
+        <translation>API key</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="51"/>
@@ -173,8 +178,8 @@
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="69"/>
-        <source>System Prompt</source>
-        <translation>System Prompt</translation>
+        <source>System prompt</source>
+        <translation>System prompt</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="70"/>

@@ -147,6 +147,11 @@
         <translation>Einstellungen</translation>
     </message>
     <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="40"/>
+        <source>LLM provider</source>
+        <translation>LLM-Anbieter</translation>
+    </message>
+    <message>
         <location filename="../qml/pages/SettingsPage.qml" line="39"/>
         <source>Base URL</source>
         <translation>Basis-URL</translation>
@@ -158,7 +163,7 @@
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="50"/>
-        <source>API Key</source>
+        <source>API key</source>
         <translation>API-Schlüssel</translation>
     </message>
     <message>
@@ -173,7 +178,7 @@
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="69"/>
-        <source>System Prompt</source>
+        <source>System prompt</source>
         <translation>System-Prompt</translation>
     </message>
     <message>

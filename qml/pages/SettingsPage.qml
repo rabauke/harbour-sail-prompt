@@ -4,7 +4,9 @@ import Sailfish.Silica 1.0
 
 Page {
   id: settingsPage
+
   allowedOrientations: Orientation.All
+
   property bool updatingModel: false
 
   function updateModelIndex() {
@@ -26,6 +28,7 @@ Page {
 
     Column {
       id: column
+
       width: parent.width
       spacing: Theme.paddingMedium
 
@@ -33,6 +36,9 @@ Page {
         title: qsTr('Settings')
       }
 
+      SectionHeader {
+        text: qsTr('LLM provider')
+      }
       TextField {
         id: urlField
         width: parent.width
@@ -41,19 +47,17 @@ Page {
         inputMethodHints: Qt.ImhUrlCharactersOnly
         EnterKey.iconSource: 'image://theme/icon-m-enter-next'
         EnterKey.onClicked: apiKeyField.focus = true
-        validator: RegExpValidator { regExp: /\S+/ }
+        validator: RegExpValidator { regExp: /https?:\/\/\S*/ }
       }
-
       PasswordField {
         id: apiKeyField
         width: parent.width
-        label: qsTr('API Key')
+        label: qsTr('API key')
         placeholderText: qsTr('sk-...')
         EnterKey.iconSource: 'image://theme/icon-m-enter-next'
         EnterKey.onClicked: systemPromptField.focus = true
-        validator: RegExpValidator { regExp: /\S+/ }
+        validator: RegExpValidator { regExp: /\S*/ }
       }
-
       Label {
         x: Theme.horizontalPageMargin
         width: parent.width - Theme.horizontalPageMargin * 2
@@ -63,13 +67,19 @@ Page {
         text: qsTr('The API key is stored in the application settings and is not encrypted.')
       }
 
+      SectionHeader {
+        text: qsTr('System prompt')
+      }
       TextArea {
         id: systemPromptField
         width: parent.width
-        label: qsTr('System Prompt')
+        label: qsTr('System prompt')
         placeholderText: qsTr('You are a helpful assistant.')
       }
 
+      SectionHeader {
+        text: qsTr('Model')
+      }
       Button {
         anchors.horizontalCenter: parent.horizontalCenter
         text: appModel.modelsLoading ? qsTr('Loading models...') : qsTr('Refresh Models')
@@ -79,7 +89,6 @@ Page {
           appModel.fetchModels()
         }
       }
-
       ComboBox {
         id: modelCombo
         width: parent.width
@@ -106,17 +115,14 @@ Page {
       SectionHeader {
         text: qsTr('Configuration State')
       }
-
       DetailItem {
         label: qsTr('Configured')
         value: appModel.configured ? qsTr('Yes') : qsTr('No')
       }
-
       DetailItem {
         label: qsTr('Model Selected')
         value: appModel.selectedModelAvailable ? appModel.model : qsTr('None')
       }
-
       Label {
         id: errorLabel
         x: Theme.horizontalPageMargin
@@ -125,9 +131,9 @@ Page {
         wrapMode: Text.WordWrap
         visible: text !== ''
       }
-
       Item {
-        width: 1; height: Theme.paddingLarge
+        width: 1
+        height: Theme.paddingLarge
       }
     }
 

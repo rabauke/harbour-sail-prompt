@@ -68,37 +68,37 @@
 <context>
     <name>FirstPage</name>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="34"/>
+        <location filename="../qml/pages/MainPage.qml" line="34"/>
         <source>Settings</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="43"/>
+        <location filename="../qml/pages/MainPage.qml" line="43"/>
         <source>New Chat</source>
         <translation>New Chat</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="30"/>
+        <location filename="../qml/pages/MainPage.qml" line="30"/>
         <source>About Sail Prompt</source>
         <translation>About Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="111"/>
+        <location filename="../qml/pages/MainPage.qml" line="111"/>
         <source>Welcome to Sail Prompt</source>
         <translation>Welcome to Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="112"/>
+        <location filename="../qml/pages/MainPage.qml" line="112"/>
         <source>Please configure your API settings to start chatting.</source>
         <translation>Please configure your API settings to start chatting.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="130"/>
+        <location filename="../qml/pages/MainPage.qml" line="130"/>
         <source>Type a message...</source>
         <translation>Type a message...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/FirstPage.qml" line="38"/>
+        <location filename="../qml/pages/MainPage.qml" line="38"/>
         <source>Export as Markdown</source>
         <translation>Export as Markdown</translation>
     </message>

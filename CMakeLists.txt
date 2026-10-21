@@ -152,9 +152,8 @@ add_custom_target(distfiles
         harbour-sail-prompt.desktop
         qml/harbour-sail-prompt.qml
         qml/cover/CoverPage.qml
-        qml/pages/FirstPage.qml
+        qml/pages/MainPage.qml
         qml/pages/SettingsPage.qml
-        qml/pages/SecondPage.qml
         qml/pages/HistoryPage.qml
         qml/pages/About.qml
         qml/components/ThirdPartyComponent.qml

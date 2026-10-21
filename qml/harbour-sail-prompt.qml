@@ -11,7 +11,7 @@ ApplicationWindow {
     id: appModel
   }
 
-  initialPage: Qt.resolvedUrl('pages/FirstPage.qml')
+  initialPage: Qt.resolvedUrl('pages/MainPage.qml')
   cover: Qt.resolvedUrl('cover/CoverPage.qml')
   allowedOrientations: defaultAllowedOrientations
 }

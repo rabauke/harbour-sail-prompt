@@ -12,35 +12,35 @@
 
 namespace {
 
-  QString apiErrorMessage(const QJsonObject &object) {
-    const QJsonValue errorValue = object.value("error");
+  QString apiErrorMessage(const QJsonObject& object) {
+    const QJsonValue errorValue{object.value("error")};
     if (errorValue.isString())
       return errorValue.toString();
     if (errorValue.isObject()) {
-      const QJsonObject error = errorValue.toObject();
+      const QJsonObject error{errorValue.toObject()};
       if (error.value("message").isString())
         return error.value("message").toString();
     }
-    return QString();
+    return {};
   }
 
 
-  open_ai_api::Error httpError(QNetworkReply *reply, const QByteArray &body) {
-    const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  open_ai_api::Error httpError(QNetworkReply* reply, const QByteArray& body) {
+    const int status{reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()};
     QJsonParseError parseError;
-    const QJsonDocument document = QJsonDocument::fromJson(body, &parseError);
-    const QString apiMessage =
-        document.isObject() ? apiErrorMessage(document.object()) : QString();
-    QString description = apiMessage;
+    const QJsonDocument document{QJsonDocument::fromJson(body, &parseError)};
+    const QString apiMessage{document.isObject() ? apiErrorMessage(document.object())
+                                                 : QString{}};
+    QString description{apiMessage};
     if (description.isEmpty())
-      description = QString("HTTP %1").arg(status);
+      description = QString{"HTTP %1"}.arg(status);
     else
-      description = QString("HTTP %1: %2").arg(status).arg(description);
+      description = QString{"HTTP %1: %2"}.arg(status).arg(description);
     if (status == 401 or status == 403)
-      return open_ai_api::Error(open_ai_api::Error::invalid_api_key, description);
+      return open_ai_api::Error{open_ai_api::Error::invalid_api_key, description};
     if (status == 404 or apiMessage.contains("model", Qt::CaseInsensitive))
-      return open_ai_api::Error(open_ai_api::Error::invalid_model, description);
-    return open_ai_api::Error(open_ai_api::Error::network_error, description);
+      return open_ai_api::Error{open_ai_api::Error::invalid_model, description};
+    return open_ai_api::Error{open_ai_api::Error::network_error, description};
   }
 
 }  // namespace
@@ -48,12 +48,12 @@ namespace {
 
 namespace open_ai_api {
 
-  QJsonObject createChatPayload(const QList<Message> &messages, const QString &model) {
+  QJsonObject createChatPayload(const QList<Message>& messages, const QString& model) {
     QJsonObject payload;
     payload["model"] = model;
     payload["stream"] = true;
     QJsonArray array;
-    for (int i = 0; i < messages.size(); ++i) {
+    for (int i{0}; i < messages.size(); ++i) {
       QJsonObject item;
       item["role"] = messages.at(i).role;
       item["content"] = messages.at(i).content;
@@ -64,7 +64,7 @@ namespace open_ai_api {
   }
 
 
-  SseParser::SseParser() : m_done(false) {
+  SseParser::SseParser() : m_done{false} {
   }
 
 
@@ -73,60 +73,60 @@ namespace open_ai_api {
   }
 
 
-  Error SseParser::processEvent(const QList<QByteArray> &dataLines, QStringList *chunks) {
+  Error SseParser::processEvent(const QList<QByteArray>& dataLines, QStringList* chunks) {
     if (dataLines.isEmpty())
-      return Error();
-    const QByteArray data = dataLines.join("\n");
+      return {};
+    const QByteArray data{dataLines.join("\n")};
     if (data.trimmed() == "[DONE]") {
       m_done = true;
-      return Error();
+      return {};
     }
     QJsonParseError parseError;
-    const QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
+    const QJsonDocument document{QJsonDocument::fromJson(data, &parseError)};
     if (parseError.error != QJsonParseError::NoError or not document.isObject())
-      return Error(Error::invalid_response,
-                   QString("Malformed streaming response: %1").arg(parseError.errorString()));
-    const QJsonObject response = document.object();
-    const QString apiMessage = apiErrorMessage(response);
+      return Error{Error::invalid_response,
+                   QString{"Malformed streaming response: %1"}.arg(parseError.errorString())};
+    const QJsonObject response{document.object()};
+    const QString apiMessage{apiErrorMessage(response)};
     if (not apiMessage.isEmpty())
-      return Error(apiMessage.contains("model", Qt::CaseInsensitive) ? Error::invalid_model
+      return Error{apiMessage.contains("model", Qt::CaseInsensitive) ? Error::invalid_model
                                                                      : Error::invalid_response,
-                   apiMessage);
-    const QJsonValue choicesValue = response.value("choices");
+                   apiMessage};
+    const QJsonValue choicesValue{response.value("choices")};
     if (not choicesValue.isArray() or choicesValue.toArray().isEmpty() or
         not choicesValue.toArray().first().isObject())
-      return Error(Error::invalid_response, "Streaming response has no valid choices array");
-    const QJsonObject choice = choicesValue.toArray().first().toObject();
+      return Error{Error::invalid_response, "Streaming response has no valid choices array"};
+    const QJsonObject choice{choicesValue.toArray().first().toObject()};
     if (not choice.value("delta").isObject())
-      return Error(Error::invalid_response, "Streaming response has no valid delta object");
-    const QJsonValue content = choice.value("delta").toObject().value("content");
+      return Error{Error::invalid_response, "Streaming response has no valid delta object"};
+    const QJsonValue content{choice.value("delta").toObject().value("content")};
     if (not content.isUndefined() and not content.isString())
-      return Error(Error::invalid_response, "Streaming response content is not a string");
+      return Error{Error::invalid_response, "Streaming response content is not a string"};
     if (content.isString() and not content.toString().isEmpty())
       chunks->append(content.toString());
-    return Error();
+    return {};
   }
 
 
-  Error SseParser::append(const QByteArray &data, bool final, QStringList *chunks) {
+  Error SseParser::append(const QByteArray& data, bool final, QStringList* chunks) {
     if (m_done)
-      return Error();
+      return {};
     m_buffer.append(data);
     while (true) {
-      const int newline = m_buffer.indexOf('\n');
+      const int newline{m_buffer.indexOf('\n')};
       if (newline < 0)
         break;
-      QByteArray line = m_buffer.left(newline);
+      QByteArray line{m_buffer.left(newline)};
       m_buffer.remove(0, newline + 1);
       if (line.endsWith('\r'))
         line.chop(1);
       if (line.isEmpty()) {
-        const Error error = processEvent(m_dataLines, chunks);
+        const Error error{processEvent(m_dataLines, chunks)};
         m_dataLines.clear();
         if (error.error_code != Error::none or m_done)
           return error;
       } else if (line.startsWith("data:")) {
-        QByteArray value = line.mid(5);
+        QByteArray value{line.mid(5)};
         if (value.startsWith(' '))
           value.remove(0, 1);
         m_dataLines.append(value);
@@ -134,7 +134,7 @@ namespace open_ai_api {
     }
     if (final) {
       if (not m_buffer.isEmpty()) {
-        QByteArray line = m_buffer;
+        QByteArray line{m_buffer};
         if (line.endsWith('\r'))
           line.chop(1);
         if (line.startsWith("data:")) {
@@ -147,18 +147,18 @@ namespace open_ai_api {
       }
       return processEvent(m_dataLines, chunks);
     }
-    return Error();
+    return {};
   }
 
 
-  OpenAiApi::OpenAiApi(QObject *parent)
-      : QObject(parent),
-        m_network_access_manager(new QNetworkAccessManager(this)),
-        m_reply(0),
-        m_request_kind(NoRequest),
-        m_timed_out(false),
-        m_cancelled(false),
-        m_finishing(false) {
+  OpenAiApi::OpenAiApi(QObject* parent)
+      : QObject{parent},
+        m_network_access_manager{new QNetworkAccessManager{this}},
+        m_reply{nullptr},
+        m_request_kind{NoRequest},
+        m_timed_out{false},
+        m_cancelled{false},
+        m_finishing{false} {
     m_timeout.setSingleShot(true);
     connect(&m_timeout, &QTimer::timeout, this, [this]() {
       m_timed_out = true;
@@ -168,16 +168,16 @@ namespace open_ai_api {
   }
 
 
-  OpenAiApi::OpenAiApi(const QUrl &baseUrl, const QString &apiKey, QObject *parent)
-      : QObject(parent),
-        m_base_url(baseUrl),
-        m_api_key(apiKey),
-        m_network_access_manager(new QNetworkAccessManager(this)),
-        m_reply(0),
-        m_request_kind(NoRequest),
-        m_timed_out(false),
-        m_cancelled(false),
-        m_finishing(false) {
+  OpenAiApi::OpenAiApi(const QUrl& baseUrl, const QString& apiKey, QObject* parent)
+      : QObject{parent},
+        m_base_url{baseUrl},
+        m_api_key{apiKey},
+        m_network_access_manager{new QNetworkAccessManager{this}},
+        m_reply{nullptr},
+        m_request_kind{NoRequest},
+        m_timed_out{false},
+        m_cancelled{false},
+        m_finishing{false} {
     m_timeout.setSingleShot(true);
     connect(&m_timeout, &QTimer::timeout, this, [this]() {
       m_timed_out = true;
@@ -192,12 +192,12 @@ namespace open_ai_api {
   }
 
 
-  void OpenAiApi::setBaseUrl(const QUrl &url) {
+  void OpenAiApi::setBaseUrl(const QUrl& url) {
     m_base_url = url;
   }
 
 
-  void OpenAiApi::setApiKey(const QString &key) {
+  void OpenAiApi::setApiKey(const QString& key) {
     m_api_key = key;
   }
 
@@ -209,12 +209,12 @@ namespace open_ai_api {
 
   bool OpenAiApi::beginRequest(RequestKind kind) {
     if (active()) {
-      const Error error(Error::request_in_progress,
-                        "Another API request is already in progress");
+      const Error error{Error::request_in_progress,
+                        "Another API request is already in progress"};
       if (kind == ModelsRequest)
-        Q_EMIT getModelsFinished(QList<Model>(), error);
+        Q_EMIT getModelsFinished(QList<Model>{}, error);
       else
-        Q_EMIT streamingChatFinished(QString(), error);
+        Q_EMIT streamingChatFinished(QString{}, error);
       return false;
     }
     m_request_kind = kind;
@@ -248,7 +248,7 @@ namespace open_ai_api {
   }
 
 
-  void OpenAiApi::finishModels(const QList<Model> &models, const Error &error) {
+  void OpenAiApi::finishModels(const QList<Model>& models, const Error& error) {
     if (m_finishing)
       return;
     m_finishing = true;
@@ -257,11 +257,11 @@ namespace open_ai_api {
   }
 
 
-  void OpenAiApi::finishChat(const Error &error) {
+  void OpenAiApi::finishChat(const Error& error) {
     if (m_finishing)
       return;
     m_finishing = true;
-    const QString reply = m_full_reply;
+    const QString reply{m_full_reply};
     cleanupRequest();
     Q_EMIT streamingChatFinished(reply, error);
   }
@@ -270,12 +270,12 @@ namespace open_ai_api {
   void OpenAiApi::getModels() {
     if (not beginRequest(ModelsRequest))
       return;
-    QString urlStr = m_base_url.toString();
+    QString urlStr{m_base_url.toString()};
     if (not urlStr.endsWith("/"))
       urlStr.append("/");
     urlStr.append("models");
 
-    QNetworkRequest request((QUrl(urlStr)));
+    QNetworkRequest request{QUrl{urlStr}};
     request.setRawHeader("Authorization", ("Bearer " + m_api_key).toUtf8());
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
@@ -286,18 +286,18 @@ namespace open_ai_api {
     resetTimeout();
 
     connect(m_reply, &QNetworkReply::finished, this, [this]() {
-      QNetworkReply *reply = m_reply;
+      QNetworkReply* reply = m_reply;
 
       QList<Model> model_list;
 
-      const QByteArray data = reply->readAll();
-      const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+      const QByteArray data{reply->readAll()};
+      const int status{reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()};
       if (m_timed_out) {
-        finishModels(model_list, Error(Error::timeout_error, "Model request timed out"));
+        finishModels(model_list, Error{Error::timeout_error, "Model request timed out"});
         return;
       }
       if (m_cancelled) {
-        finishModels(model_list, Error(Error::cancelled, "Model request was cancelled"));
+        finishModels(model_list, Error{Error::cancelled, "Model request was cancelled"});
         return;
       }
       if (status >= 400) {
@@ -305,38 +305,38 @@ namespace open_ai_api {
         return;
       }
       if (reply->error() != QNetworkReply::NoError) {
-        finishModels(model_list, Error(Error::network_error, reply->errorString()));
+        finishModels(model_list, Error{Error::network_error, reply->errorString()});
         return;
       }
       QJsonParseError parseError;
-      QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+      QJsonDocument doc{QJsonDocument::fromJson(data, &parseError)};
       if (parseError.error != QJsonParseError::NoError or not doc.isObject()) {
-        finishModels(model_list, Error(Error::invalid_response,
-                                       "Models response is not valid JSON object"));
+        finishModels(model_list, Error{Error::invalid_response,
+                                       "Models response is not valid JSON object"});
         return;
       }
 
-      QJsonObject response = doc.object();
+      QJsonObject response{doc.object()};
       if (not response.value("data").isArray()) {
         finishModels(model_list,
-                     Error(Error::invalid_response, "Models response has no data array"));
+                     Error{Error::invalid_response, "Models response has no data array"});
         return;
       }
-      QJsonArray modelsArray = response["data"].toArray();
-      for (int i = 0; i < modelsArray.size(); ++i) {
-        QJsonValue value = modelsArray.at(i);
+      QJsonArray modelsArray(response["data"].toArray());
+      for (int i{0}; i < modelsArray.size(); ++i) {
+        QJsonValue value{modelsArray.at(i)};
         if (not value.isObject()) {
-          finishModels(QList<Model>(), Error(Error::invalid_response,
-                                             "Models response contains a malformed entry"));
+          finishModels(QList<Model>{}, Error{Error::invalid_response,
+                                             "Models response contains a malformed entry"});
           return;
         }
-        QJsonObject model_obj = value.toObject();
+        QJsonObject model_obj{value.toObject()};
         Model model;
         if (not model_obj.value("id").isString() or
             model_obj.value("id").toString().trimmed().isEmpty()) {
-          finishModels(QList<Model>(),
-                       Error(Error::invalid_response,
-                             "Models response contains an entry without an id"));
+          finishModels(QList<Model>{},
+                       Error{Error::invalid_response,
+                             "Models response contains an entry without an id"});
           return;
         }
         model.id = model_obj["id"].toString();
@@ -347,30 +347,30 @@ namespace open_ai_api {
         model_list.append(model);
       }
 
-      std::sort(model_list.begin(), model_list.end(), [](const Model &a, const Model &b) {
+      std::sort(model_list.begin(), model_list.end(), [](const Model& a, const Model& b) {
         return QString::compare(a.id, b.id, Qt::CaseInsensitive) < 0;
       });
 
       auto iter = std::unique(model_list.begin(), model_list.end(),
-                              [](const Model &a, const Model &b) { return a.id == b.id; });
+                              [](const Model& a, const Model& b) { return a.id == b.id; });
       model_list.erase(iter, model_list.end());
 
-      finishModels(model_list, Error());
+      finishModels(model_list, Error{});
     });
   }
 
 
-  void OpenAiApi::streamingChat(const QList<Message> &messages, const QString &model) {
+  void OpenAiApi::streamingChat(const QList<Message>& messages, const QString& model) {
     if (!beginRequest(ChatRequest))
       return;
-    const QJsonObject payload = createChatPayload(messages, model);
+    const QJsonObject payload{createChatPayload(messages, model)};
 
-    QString urlStr = m_base_url.toString();
+    QString urlStr{m_base_url.toString()};
     if (!urlStr.endsWith("/"))
       urlStr.append("/");
     urlStr.append("chat/completions");
 
-    QNetworkRequest request((QUrl(urlStr)));
+    QNetworkRequest request{QUrl{urlStr}};
     request.setRawHeader("Authorization", ("Bearer " + m_api_key).toUtf8());
     request.setRawHeader("Content-Type", "application/json");
 
@@ -379,18 +379,18 @@ namespace open_ai_api {
 #endif
 
     m_full_reply.clear();
-    m_sse_parser = SseParser();
+    m_sse_parser = SseParser{};
     m_reply = m_network_access_manager->post(
-        request, QJsonDocument(payload).toJson(QJsonDocument::Compact));
+        request, QJsonDocument{payload}.toJson(QJsonDocument::Compact));
     resetTimeout();
 
     connect(m_reply, &QNetworkReply::readyRead, this, [this]() {
-      const QByteArray data = m_reply->readAll();
+      const QByteArray data{m_reply->readAll()};
       if (!data.isEmpty())
         resetTimeout();
       QStringList chunks;
-      const Error error = m_sse_parser.append(data, false, &chunks);
-      for (int i = 0; i < chunks.size(); ++i) {
+      const Error error{m_sse_parser.append(data, false, &chunks)};
+      for (int i{0}; i < chunks.size(); ++i) {
         m_full_reply.append(chunks.at(i));
         Q_EMIT streamingChatReply(chunks.at(i));
       }
@@ -404,15 +404,15 @@ namespace open_ai_api {
     connect(m_reply, &QNetworkReply::finished, this, [this]() {
       if (!m_reply or m_finishing)
         return;
-      QNetworkReply *reply = m_reply;
-      const QByteArray remaining = reply->readAll();
-      const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+      QNetworkReply* reply = m_reply;
+      const QByteArray remaining{reply->readAll()};
+      const int status{reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()};
       if (m_timed_out) {
-        finishChat(Error(Error::timeout_error, "Chat request timed out due to inactivity"));
+        finishChat(Error{Error::timeout_error, "Chat request timed out due to inactivity"});
         return;
       }
       if (m_cancelled) {
-        finishChat(Error(Error::cancelled, "Chat request was cancelled"));
+        finishChat(Error{Error::cancelled, "Chat request was cancelled"});
         return;
       }
       if (status >= 400) {
@@ -420,12 +420,12 @@ namespace open_ai_api {
         return;
       }
       if (reply->error() != QNetworkReply::NoError) {
-        finishChat(Error(Error::network_error, reply->errorString()));
+        finishChat(Error{Error::network_error, reply->errorString()});
         return;
       }
       QStringList chunks;
-      const Error error = m_sse_parser.append(remaining, true, &chunks);
-      for (int i = 0; i < chunks.size(); ++i) {
+      const Error error{m_sse_parser.append(remaining, true, &chunks)};
+      for (int i{0}; i < chunks.size(); ++i) {
         m_full_reply.append(chunks.at(i));
         Q_EMIT streamingChatReply(chunks.at(i));
       }

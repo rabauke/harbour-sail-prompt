@@ -4,7 +4,7 @@
 
 QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
   QString html{
-    R"(
+      R"(
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -88,8 +88,7 @@ QString HtmlRenderer::render(const QList<ChatMessage*>& messages) {
       </script>
       <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </head>
-  <body>)"
-  };
+  <body>)"};
 
   for (int i{0}; i < messages.size(); ++i)
     html += render_message_block(i, messages.at(i));
@@ -109,10 +108,10 @@ QString HtmlRenderer::render_markdown(const QString& text) {
 
 
 QString HtmlRenderer::render_message_block(const int index, const ChatMessage* message) {
-  if (message->role() == ChatMessage::System) return {};
+  if (message->role() == ChatMessage::System)
+    return {};
 
-  const QString roleClass{message->role() == ChatMessage::User ? "user"
-                                                               : "agent"};
+  const QString roleClass{message->role() == ChatMessage::User ? "user" : "agent"};
   QString html{QString{"<div id=\"msg-%1\" class=\"message %2\">"}.arg(index).arg(roleClass)};
   html += render_markdown(message->content());
   html += "</div>";

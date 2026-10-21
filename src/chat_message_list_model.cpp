@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-ChatMessageListModel::ChatMessageListModel(QObject *parent) : QAbstractListModel(parent) {
+ChatMessageListModel::ChatMessageListModel(QObject* parent) : QAbstractListModel{parent} {
 }
 
 
@@ -11,7 +11,7 @@ ChatMessageListModel::~ChatMessageListModel() {
 }
 
 
-int ChatMessageListModel::rowCount(const QModelIndex &parent) const {
+int ChatMessageListModel::rowCount(const QModelIndex& parent) const {
   if (parent.isValid()) {
     return 0;
   }
@@ -24,19 +24,19 @@ int ChatMessageListModel::count() const {
 }
 
 
-QVariant ChatMessageListModel::data(const QModelIndex &index, int role) const {
+QVariant ChatMessageListModel::data(const QModelIndex& index, int role) const {
   if (not index.isValid() or index.row() >= m_messages.size()) {
-    return QVariant();
+    return {};
   }
 
-  ChatMessage *item = m_messages.at(index.row());
+  ChatMessage* item{m_messages.at(index.row())};
   switch (role) {
     case RoleRole:
       return item->role();
     case ContentRole:
       return item->content();
     default:
-      return QVariant();
+      return {};
   }
 }
 
@@ -49,8 +49,8 @@ QHash<int, QByteArray> ChatMessageListModel::roleNames() const {
 }
 
 
-void ChatMessageListModel::add(ChatMessage *message) {
-  beginInsertRows(QModelIndex(), m_messages.size(), m_messages.size());
+void ChatMessageListModel::add(ChatMessage* message) {
+  beginInsertRows(QModelIndex{}, m_messages.size(), m_messages.size());
   message->setParent(this);
   m_messages.append(message);
   endInsertRows();
@@ -60,8 +60,8 @@ void ChatMessageListModel::add(ChatMessage *message) {
 
 void ChatMessageListModel::remove(int index) {
   if (index >= 0 and index < m_messages.size()) {
-    beginRemoveRows(QModelIndex(), index, index);
-    ChatMessage *message = m_messages.takeAt(index);
+    beginRemoveRows(QModelIndex{}, index, index);
+    ChatMessage* message{m_messages.takeAt(index)};
     message->deleteLater();
     endRemoveRows();
     Q_EMIT countChanged();
@@ -72,7 +72,7 @@ void ChatMessageListModel::remove(int index) {
 void ChatMessageListModel::clear() {
   if (m_messages.isEmpty())
     return;
-  beginRemoveRows(QModelIndex(), 0, m_messages.size() - 1);
+  beginRemoveRows(QModelIndex{}, 0, m_messages.size() - 1);
   qDeleteAll(m_messages);
   m_messages.clear();
   endRemoveRows();
@@ -80,19 +80,19 @@ void ChatMessageListModel::clear() {
 }
 
 
-void ChatMessageListModel::setContent(int index, const QString &content) {
+void ChatMessageListModel::setContent(int index, const QString& content) {
   if (index < 0 or index >= m_messages.size())
     return;
-  ChatMessage *msg = m_messages.at(index);
+  ChatMessage* msg{m_messages.at(index)};
   if (msg->content() == content)
     return;
   msg->setContent(content);
-  QModelIndex mi = this->index(index, 0);
-  Q_EMIT dataChanged(mi, mi, QVector<int>() << ContentRole);
+  QModelIndex mi{this->index(index, 0)};
+  Q_EMIT dataChanged(mi, mi, QVector<int>{} << ContentRole);
 }
 
 
-ChatMessage *ChatMessageListModel::get(int index) const {
+ChatMessage* ChatMessageListModel::get(int index) const {
   if (index >= 0 and index < m_messages.size())
     return m_messages.at(index);
   return nullptr;

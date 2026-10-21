@@ -11,23 +11,23 @@ class ChatMessageListModel : public QAbstractListModel {
 public:
   enum MyItemRoles { RoleRole = Qt::UserRole + 1, ContentRole = Qt::UserRole + 2 };
 
-  explicit ChatMessageListModel(QObject *parent = nullptr);
+  explicit ChatMessageListModel(QObject* parent = nullptr);
   ~ChatMessageListModel();
 
-  int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+  int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   int count() const;
-  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+  QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
   QHash<int, QByteArray> roleNames() const override;
 
-  Q_INVOKABLE void add(ChatMessage *message);
+  Q_INVOKABLE void add(ChatMessage* message);
   Q_INVOKABLE void remove(int index);
   Q_INVOKABLE void clear();
-  Q_INVOKABLE void setContent(int index, const QString &content);
+  Q_INVOKABLE void setContent(int index, const QString& content);
 
-  Q_INVOKABLE ChatMessage *get(int index) const;
+  Q_INVOKABLE ChatMessage* get(int index) const;
 
   Q_SIGNAL void countChanged();
 
 private:
-  QList<ChatMessage *> m_messages;
+  QList<ChatMessage*> m_messages;
 };

@@ -13,7 +13,7 @@ public:
   explicit SessionListModel(SessionStore* store, QObject* parent = nullptr);
   ~SessionListModel();
 
-  int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+  int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
   QHash<int, QByteArray> roleNames() const override;
 

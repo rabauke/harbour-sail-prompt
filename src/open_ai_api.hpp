@@ -32,10 +32,10 @@ namespace open_ai_api {
     ErrorKind error_code;
     QString description;
 
-    Error() : error_code(none) {
+    Error() : error_code{none} {
     }
 
-    Error(ErrorKind code, const QString &desc) : error_code(code), description(desc) {
+    Error(ErrorKind code, const QString& desc) : error_code{code}, description{desc} {
     }
   };
 
@@ -55,17 +55,17 @@ namespace open_ai_api {
   };
 
 
-  QJsonObject createChatPayload(const QList<Message> &messages, const QString &model);
+  QJsonObject createChatPayload(const QList<Message>& messages, const QString& model);
 
 
   class SseParser {
   public:
     SseParser();
-    Error append(const QByteArray &data, bool final, QStringList *chunks);
+    Error append(const QByteArray& data, bool final, QStringList* chunks);
     bool done() const;
 
   private:
-    Error processEvent(const QList<QByteArray> &dataLines, QStringList *chunks);
+    Error processEvent(const QList<QByteArray>& dataLines, QStringList* chunks);
 
     QByteArray m_buffer;
     QList<QByteArray> m_dataLines;
@@ -77,36 +77,36 @@ namespace open_ai_api {
     Q_OBJECT
 
   public:
-    explicit OpenAiApi(QObject *parent = nullptr);
-    explicit OpenAiApi(const QUrl &baseUrl, const QString &apiKey, QObject *parent = nullptr);
+    explicit OpenAiApi(QObject* parent = nullptr);
+    explicit OpenAiApi(const QUrl& baseUrl, const QString& apiKey, QObject* parent = nullptr);
     ~OpenAiApi();
 
-    void setBaseUrl(const QUrl &url);
-    void setApiKey(const QString &key);
+    void setBaseUrl(const QUrl& url);
+    void setApiKey(const QString& key);
 
     void getModels();
-    void streamingChat(const QList<Message> &messages, const QString &model);
+    void streamingChat(const QList<Message>& messages, const QString& model);
     void cancel();
     bool active() const;
 
-    Q_SIGNAL void getModelsFinished(const QList<open_ai_api::Model> &models,
-                                    const open_ai_api::Error &error);
-    Q_SIGNAL void streamingChatReply(const QString &reply);
-    Q_SIGNAL void streamingChatFinished(const QString &reply, const open_ai_api::Error &error);
+    Q_SIGNAL void getModelsFinished(const QList<open_ai_api::Model>& models,
+                                    const open_ai_api::Error& error);
+    Q_SIGNAL void streamingChatReply(const QString& reply);
+    Q_SIGNAL void streamingChatFinished(const QString& reply, const open_ai_api::Error& error);
 
   private:
     enum RequestKind { NoRequest, ModelsRequest, ChatRequest };
 
     bool beginRequest(RequestKind kind);
-    void finishModels(const QList<Model> &models, const Error &error);
-    void finishChat(const Error &error);
+    void finishModels(const QList<Model>& models, const Error& error);
+    void finishChat(const Error& error);
     void resetTimeout();
     void cleanupRequest();
 
     QUrl m_base_url;
     QString m_api_key;
-    QNetworkAccessManager *m_network_access_manager;
-    QNetworkReply *m_reply;
+    QNetworkAccessManager* m_network_access_manager;
+    QNetworkReply* m_reply;
     QTimer m_timeout;
     RequestKind m_request_kind;
     bool m_timed_out;

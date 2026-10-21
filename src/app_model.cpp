@@ -8,27 +8,27 @@
 
 namespace {
 
-QString settings_path() {
-  return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" +
-         QCoreApplication::applicationName() + ".conf";
-}
+  QString settings_path() {
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/" +
+           QCoreApplication::applicationName() + ".conf";
+  }
 
 }  // namespace
 
 
 AppModel::AppModel(QObject* parent)
-    : QObject(parent),
-      m_messages(new ChatMessageListModel(this)),
-      m_api(new open_ai_api::OpenAiApi(this)),
-      m_busy(false),
-      m_modelsLoading(false),
-      m_settingsGuidanceShown(false),
-      m_assistantMessageIndex(-1),
-      m_exporting(false),
-      m_exportSuccess(false),
-      m_sessionStore(new SessionStore(this)),
-      m_sessionListModel(new SessionListModel(m_sessionStore, this)),
-      m_settings(settings_path(), QSettings::NativeFormat) {
+    : QObject{parent},
+      m_messages{new ChatMessageListModel{this}},
+      m_api{new open_ai_api::OpenAiApi{this}},
+      m_busy{false},
+      m_modelsLoading{false},
+      m_settingsGuidanceShown{false},
+      m_assistantMessageIndex{-1},
+      m_exporting{false},
+      m_exportSuccess{false},
+      m_sessionStore{new SessionStore{this}},
+      m_sessionListModel{new SessionListModel{m_sessionStore, this}},
+      m_settings{settings_path(), QSettings::NativeFormat} {
   connect(m_sessionListModel, &SessionListModel::errorOccurred, this, &AppModel::errorOccurred);
   loadConfig();
 
@@ -58,10 +58,10 @@ QString AppModel::baseUrl() const {
 
 
 void AppModel::setBaseUrl(const QString& baseUrl) {
-  const QString normalized = baseUrl.trimmed();
+  const QString normalized{baseUrl.trimmed()};
   if (m_baseUrl != normalized) {
     m_baseUrl = normalized;
-    m_api->setBaseUrl(QUrl(m_baseUrl));
+    m_api->setBaseUrl(QUrl{m_baseUrl});
     m_models.clear();
     m_model.clear();
     Q_EMIT baseUrlChanged(m_baseUrl);
@@ -145,7 +145,7 @@ bool AppModel::busy() const {
 
 
 bool AppModel::configured() const {
-  const QUrl url(m_baseUrl);
+  const QUrl url{m_baseUrl};
   return url.isValid() and not url.scheme().isEmpty() and not url.host().isEmpty() and
          not m_apiKey.trimmed().isEmpty();
 }
@@ -219,11 +219,11 @@ void AppModel::saveCurrentSession() {
 
   Session session;
   session.id = m_currentSessionId;
-  for (int i = 0; i < m_messages->rowCount(); ++i) {
-    ChatMessage* msg = m_messages->get(i);
+  for (int i{0}; i < m_messages->rowCount(); ++i) {
+    ChatMessage* msg{m_messages->get(i)};
     if (msg->role() != ChatMessage::User and msg->role() != ChatMessage::Agent)
       continue;
-    session.messages.append(new ChatMessage(msg->role(), msg->content()));
+    session.messages.append(new ChatMessage{msg->role(), msg->content()});
   }
 
   if (m_sessionStore->saveSession(session)) {
@@ -241,14 +241,14 @@ void AppModel::loadSession(int index) {
     Q_EMIT errorOccurred("Cannot load a session while a response is streaming");
     return;
   }
-  const QString selectedId = m_sessionListModel->sessionId(index);
-  QList<ChatMessage*> newMessages = m_sessionListModel->messagesById(selectedId);
+  const QString selectedId{m_sessionListModel->sessionId(index)};
+  QList<ChatMessage*> newMessages{m_sessionListModel->messagesById(selectedId)};
   if (newMessages.isEmpty())
     return;
   saveCurrentSession();
 
   m_messages->clear();
-  for (int i = 0; i < newMessages.size(); ++i) {
+  for (int i{0}; i < newMessages.size(); ++i) {
     m_messages->add(newMessages.at(i));
   }
   m_currentSessionId = selectedId;
@@ -289,10 +289,10 @@ void AppModel::exportToMarkdown() {
   Q_EMIT exportMessageChanged();
 
   QList<ChatMessage*> msgs;
-  for (int i = 0; i < m_messages->rowCount(); ++i) {
+  for (int i{0}; i < m_messages->rowCount(); ++i) {
     msgs.append(m_messages->get(i));
   }
-  const MarkdownExporter::Result result = MarkdownExporter::exportMessages(msgs);
+  const MarkdownExporter::Result result{MarkdownExporter::exportMessages(msgs)};
   if (not result.success) {
     setExportFailure(result.error);
     return;
@@ -339,7 +339,7 @@ void AppModel::addUserMessage(const QString& content) {
     return;
   }
 
-  m_messages->add(new ChatMessage(ChatMessage::User, content));
+  m_messages->add(new ChatMessage{ChatMessage::User, content});
 
   QList<open_ai_api::Message> apiMessages;
   if (not m_systemPrompt.isEmpty()) {
@@ -349,8 +349,8 @@ void AppModel::addUserMessage(const QString& content) {
     apiMessages.append(sysMsg);
   }
 
-  for (int i = 0; i < m_messages->rowCount(); ++i) {
-    ChatMessage* msg = m_messages->get(i);
+  for (int i{0}; i < m_messages->rowCount(); ++i) {
+    ChatMessage* msg{m_messages->get(i)};
     open_ai_api::Message apiMsg;
     switch (msg->role()) {
       case ChatMessage::System:
@@ -372,18 +372,19 @@ void AppModel::addUserMessage(const QString& content) {
   Q_EMIT canSendChanged();
   Q_EMIT canClearChanged();
 
-  const int userMessageIndex = m_messages->rowCount() - 1;
-  Q_EMIT messageAppended(userMessageIndex,
-                         HtmlRenderer::render_message_block(userMessageIndex,
-                                                          m_messages->get(userMessageIndex)));
+  const int userMessageIndex{m_messages->rowCount() - 1};
+  Q_EMIT messageAppended(
+      userMessageIndex,
+      HtmlRenderer::render_message_block(userMessageIndex, m_messages->get(userMessageIndex)));
 
   // Add empty assistant message for streaming
   m_assistantMessageIndex = m_messages->rowCount();
-  m_messages->add(new ChatMessage(ChatMessage::Agent, ""));
+  m_messages->add(new ChatMessage{ChatMessage::Agent, ""});
   m_pendingStreamingContent.clear();
-  Q_EMIT messageAppended(m_assistantMessageIndex,
-                         HtmlRenderer::render_message_block(m_assistantMessageIndex,
-                                                          m_messages->get(m_assistantMessageIndex)));
+  Q_EMIT messageAppended(
+      m_assistantMessageIndex,
+      HtmlRenderer::render_message_block(m_assistantMessageIndex,
+                                         m_messages->get(m_assistantMessageIndex)));
 
   m_api->streamingChat(apiMessages, m_model);
   m_streamingUpdateTimer.start();
@@ -433,12 +434,12 @@ void AppModel::loadConfig() {
   m_apiKey = m_settings.value("apiKey", "").toString();
   m_model = m_settings.value("model", "").toString();
   m_systemPrompt = m_settings.value("systemPrompt", "").toString();
-  m_models = m_settings.value("models", QStringList()).toStringList();
+  m_models = m_settings.value("models", QStringList{}).toStringList();
   m_settingsGuidanceShown = m_settings.value("settingsGuidanceShown", false).toBool();
   if (not m_models.contains(m_model))
     m_model.clear();
 
-  m_api->setBaseUrl(QUrl(m_baseUrl));
+  m_api->setBaseUrl(QUrl{m_baseUrl});
   m_api->setApiKey(m_apiKey);
 }
 
@@ -464,7 +465,7 @@ void AppModel::onGetModelsFinished(const QList<open_ai_api::Model>& models,
   }
 
   m_models.clear();
-  for (int i = 0; i < models.size(); ++i) {
+  for (int i{0}; i < models.size(); ++i) {
     m_models.append(models.at(i).id);
   }
   if (not m_models.contains(m_model)) {
@@ -510,7 +511,7 @@ void AppModel::onStreamingUpdateTimeout() {
     return;
 
   if (m_assistantMessageIndex != -1) {
-    ChatMessage* msg = m_messages->get(m_assistantMessageIndex);
+    ChatMessage* msg{m_messages->get(m_assistantMessageIndex)};
     if (msg) {
       m_messages->setContent(m_assistantMessageIndex,
                              msg->content() + m_pendingStreamingContent);
@@ -531,7 +532,7 @@ void AppModel::updateRenderedDocument() {
 
 void AppModel::refreshRenderedDocumentCache() {
   QList<ChatMessage*> msgs;
-  for (int i = 0; i < m_messages->rowCount(); ++i) {
+  for (int i{0}; i < m_messages->rowCount(); ++i) {
     msgs.append(m_messages->get(i));
   }
   m_renderedDocument = HtmlRenderer::render(msgs);

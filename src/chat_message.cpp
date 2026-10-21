@@ -1,12 +1,12 @@
 #include "chat_message.hpp"
 
 
-ChatMessage::ChatMessage(QObject* parent) : QObject(parent), m_role(User) {
+ChatMessage::ChatMessage(QObject* parent) : QObject{parent}, m_role{User} {
 }
 
 
 ChatMessage::ChatMessage(Role role, const QString& content, QObject* parent)
-    : QObject(parent), m_role(role), m_content(content) {
+    : QObject{parent}, m_role{role}, m_content{content} {
 }
 
 

@@ -2,7 +2,7 @@
 
 
 SessionListModel::SessionListModel(SessionStore* store, QObject* parent)
-    : QAbstractListModel(parent), m_store(store) {
+    : QAbstractListModel{parent}, m_store{store} {
   refresh();
 }
 
@@ -21,7 +21,7 @@ int SessionListModel::rowCount(const QModelIndex& parent) const {
 
 QVariant SessionListModel::data(const QModelIndex& index, int role) const {
   if (not index.isValid() or index.row() >= m_sessions.size())
-    return QVariant();
+    return {};
 
   const Session& session = m_sessions.at(index.row());
   switch (role) {
@@ -32,15 +32,15 @@ QVariant SessionListModel::data(const QModelIndex& index, int role) const {
     case TimestampRole:
       return session.timestamp;
     case PreviewRole:
-      for (int i = 0; i < session.messages.size(); ++i) {
-        ChatMessage* msg = session.messages.at(i);
+      for (int i{0}; i < session.messages.size(); ++i) {
+        ChatMessage* msg{session.messages.at(i)};
         if (msg->role() == ChatMessage::User) {
           return msg->content().left(100).trimmed();
         }
       }
-      return QString();
+      return QString{};
   }
-  return QVariant();
+  return {};
 }
 
 
@@ -70,8 +70,8 @@ void SessionListModel::deleteSession(int index) {
 
 
 void SessionListModel::deleteSessionById(const QString& id) {
-  int index = -1;
-  for (int i = 0; i < m_sessions.size(); ++i) {
+  int index{-1};
+  for (int i{0}; i < m_sessions.size(); ++i) {
     if (m_sessions.at(i).id == id) {
       index = i;
       break;
@@ -80,8 +80,8 @@ void SessionListModel::deleteSessionById(const QString& id) {
   if (index < 0)
     return;
   if (m_store->deleteSession(id)) {
-    beginRemoveRows(QModelIndex(), index, index);
-    Session session = m_sessions.takeAt(index);
+    beginRemoveRows(QModelIndex{}, index, index);
+    Session session{m_sessions.takeAt(index)};
     SessionStore::clearSession(session);
     endRemoveRows();
   } else {
@@ -92,7 +92,7 @@ void SessionListModel::deleteSessionById(const QString& id) {
 
 QString SessionListModel::sessionId(int index) const {
   if (index < 0 or index >= m_sessions.size())
-    return QString();
+    return {};
   return m_sessions.at(index).id;
 }
 
@@ -102,25 +102,25 @@ QList<ChatMessage*> SessionListModel::messages(int index) const {
   if (index < 0 or index >= m_sessions.size())
     return result;
 
-  for (int i = 0; i < m_sessions.at(index).messages.size(); ++i) {
-    ChatMessage* msg = m_sessions.at(index).messages.at(i);
-    result.append(new ChatMessage(msg->role(), msg->content()));
+  for (int i{0}; i < m_sessions.at(index).messages.size(); ++i) {
+    ChatMessage* msg{m_sessions.at(index).messages.at(i)};
+    result.append(new ChatMessage{msg->role(), msg->content()});
   }
   return result;
 }
 
 
 QList<ChatMessage*> SessionListModel::messagesById(const QString& id) const {
-  for (int i = 0; i < m_sessions.size(); ++i) {
+  for (int i{0}; i < m_sessions.size(); ++i) {
     if (m_sessions.at(i).id == id)
       return messages(i);
   }
-  return QList<ChatMessage*>();
+  return {};
 }
 
 
 void SessionListModel::clearSessions() {
-  for (int i = 0; i < m_sessions.size(); ++i) {
+  for (int i{0}; i < m_sessions.size(); ++i) {
     SessionStore::clearSession(m_sessions[i]);
   }
   m_sessions.clear();

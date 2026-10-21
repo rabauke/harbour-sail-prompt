@@ -13,7 +13,7 @@
 #include <algorithm>
 
 
-SessionStore::SessionStore(QObject* parent) : QObject(parent) {
+SessionStore::SessionStore(QObject* parent) : QObject{parent} {
   m_storagePath =
       QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sessions";
   QDir dir;
@@ -48,40 +48,40 @@ void SessionStore::setStoragePath(const QString& path) {
 
 QString SessionStore::getFilePath(const QString& id) const {
   if (not isValidId(id))
-    return QString();
+    return {};
   return m_storagePath + "/" + id + ".json";
 }
 
 
 bool SessionStore::isValidId(const QString& id) {
-  static const QRegExp uuidPattern(
-      "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
-  return uuidPattern.exactMatch(id) and not QUuid(id).isNull();
+  static const QRegExp uuidPattern{
+      "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"};
+  return uuidPattern.exactMatch(id) and not QUuid{id}.isNull();
 }
 
 
 QList<Session> SessionStore::loadAllSessions() {
   QList<Session> sessions;
-  QDir dir(m_storagePath);
+  QDir dir{m_storagePath};
   QStringList filters;
   filters << "*.json";
-  QStringList files = dir.entryList(filters, QDir::Files);
+  QStringList files{dir.entryList(filters, QDir::Files)};
 
-  for (int fileIndex = 0; fileIndex < files.size(); ++fileIndex) {
-    const QString fileName = files.at(fileIndex);
-    const QString fileId = fileName.left(fileName.length() - 5);
+  for (int fileIndex{0}; fileIndex < files.size(); ++fileIndex) {
+    const QString fileName{files.at(fileIndex)};
+    const QString fileId{fileName.left(fileName.length() - 5)};
     if (not isValidId(fileId))
       continue;
-    QFile file(dir.absoluteFilePath(fileName));
+    QFile file{dir.absoluteFilePath(fileName)};
     if (not file.open(QIODevice::ReadOnly))
       continue;
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
+    QJsonDocument doc{QJsonDocument::fromJson(file.readAll(), &parseError)};
     if (parseError.error != QJsonParseError::NoError or not doc.isObject())
       continue;
 
-    QJsonObject obj = doc.object();
+    QJsonObject obj{doc.object()};
     if (not obj.contains("id") or not obj.value("id").isString() or
         obj.value("id").toString() != fileId or not obj.contains("title") or
         not obj.value("title").isString() or not obj.contains("timestamp") or
@@ -95,29 +95,29 @@ QList<Session> SessionStore::loadAllSessions() {
     if (not session.timestamp.isValid())
       continue;
 
-    bool valid = true;
-    bool hasUserMessage = false;
-    QJsonArray msgArray = obj.value("messages").toArray();
-    for (int i = 0; i < msgArray.size(); ++i) {
+    bool valid{true};
+    bool hasUserMessage{false};
+    QJsonArray msgArray(obj.value("messages").toArray());
+    for (int i{0}; i < msgArray.size(); ++i) {
       if (not msgArray.at(i).isObject()) {
         valid = false;
         break;
       }
-      QJsonObject msgObj = msgArray.at(i).toObject();
+      QJsonObject msgObj{msgArray.at(i).toObject()};
       if (not msgObj.contains("role") or not msgObj.value("role").isDouble() or
           not msgObj.contains("content") or not msgObj.value("content").isString()) {
         valid = false;
         break;
       }
-      int roleValue = msgObj.value("role").toInt();
+      int roleValue{msgObj.value("role").toInt()};
       if (msgObj.value("role").toDouble() != roleValue or
           (roleValue != ChatMessage::User and roleValue != ChatMessage::Agent)) {
         valid = false;
         break;
       }
-      ChatMessage::Role role = static_cast<ChatMessage::Role>(roleValue);
-      QString content = msgObj.value("content").toString();
-      session.messages.append(new ChatMessage(role, content));
+      ChatMessage::Role role{static_cast<ChatMessage::Role>(roleValue)};
+      QString content{msgObj.value("content").toString()};
+      session.messages.append(new ChatMessage{role, content});
       if (role == ChatMessage::User)
         hasUserMessage = true;
     }
@@ -142,9 +142,9 @@ bool SessionStore::saveSession(Session& session) {
     return false;
 
   // Check if there's at least one user message
-  bool hasUserMessage = false;
-  for (int i = 0; i < session.messages.size(); ++i) {
-    ChatMessage* msg = session.messages.at(i);
+  bool hasUserMessage{false};
+  for (int i{0}; i < session.messages.size(); ++i) {
+    ChatMessage* msg{session.messages.at(i)};
     if (msg->role() == ChatMessage::User) {
       hasUserMessage = true;
       break;
@@ -163,10 +163,10 @@ bool SessionStore::saveSession(Session& session) {
   session.timestamp = QDateTime::currentDateTime();
 
   if (session.title.isEmpty()) {
-    for (int i = 0; i < session.messages.size(); ++i) {
-      ChatMessage* msg = session.messages.at(i);
+    for (int i{0}; i < session.messages.size(); ++i) {
+      ChatMessage* msg{session.messages.at(i)};
       if (msg->role() == ChatMessage::User) {
-        QString normalized = msg->content().simplified();
+        QString normalized{msg->content().simplified()};
         session.title = normalized.left(50);
         if (normalized.length() > 50)
           session.title += "...";
@@ -181,8 +181,8 @@ bool SessionStore::saveSession(Session& session) {
   obj["timestamp"] = session.timestamp.toString(Qt::ISODate);
 
   QJsonArray msgArray;
-  for (int i = 0; i < session.messages.size(); ++i) {
-    ChatMessage* msg = session.messages.at(i);
+  for (int i{0}; i < session.messages.size(); ++i) {
+    ChatMessage* msg{session.messages.at(i)};
     if (msg->role() != ChatMessage::User and msg->role() != ChatMessage::Agent)
       continue;
     QJsonObject msgObj;
@@ -197,13 +197,13 @@ bool SessionStore::saveSession(Session& session) {
     m_lastError = "Could not create the session history directory";
     return false;
   }
-  QSaveFile file(getFilePath(session.id));
+  QSaveFile file{getFilePath(session.id)};
   if (!file.open(QIODevice::WriteOnly)) {
     m_lastError = file.errorString();
     return false;
   }
 
-  QByteArray json = QJsonDocument(obj).toJson();
+  QByteArray json{QJsonDocument{obj}.toJson()};
   if (file.write(json) != json.size() or !file.commit()) {
     m_lastError = file.errorString();
     return false;
@@ -214,12 +214,12 @@ bool SessionStore::saveSession(Session& session) {
 
 bool SessionStore::deleteSession(const QString& id) {
   m_lastError.clear();
-  QString path = getFilePath(id);
+  QString path{getFilePath(id)};
   if (path.isEmpty()) {
     m_lastError = "Invalid session identifier";
     return false;
   }
-  QFile file(path);
+  QFile file{path};
   if (file.exists()) {
     if (file.remove())
       return true;
@@ -233,11 +233,11 @@ bool SessionStore::deleteSession(const QString& id) {
 
 Session SessionStore::createSession(const QList<ChatMessage*>& messages) {
   Session session;
-  for (int i = 0; i < messages.size(); ++i) {
-    ChatMessage* msg = messages.at(i);
+  for (int i{0}; i < messages.size(); ++i) {
+    ChatMessage* msg{messages.at(i)};
     if (msg->role() != ChatMessage::User and msg->role() != ChatMessage::Agent)
       continue;
-    session.messages.append(new ChatMessage(msg->role(), msg->content()));
+    session.messages.append(new ChatMessage{msg->role(), msg->content()});
   }
   return session;
 }

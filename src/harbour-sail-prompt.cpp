@@ -12,7 +12,7 @@
 #include "date_time_formater.hpp"
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   QScopedPointer<QGuiApplication> app{SailfishApp::application(argc, argv)};
   app->setApplicationName(QStringLiteral("harbour-sail-prompt"));
   app->setOrganizationName(QStringLiteral("rabauke"));

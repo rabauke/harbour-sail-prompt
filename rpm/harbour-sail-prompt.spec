@@ -1,7 +1,7 @@
 Name:       harbour-sail-prompt
 
 Summary:    Conversational AI assistant with Markdown export
-Version:    0.1.0
+Version:    0.2.0
 Release:    1
 License:    GPL-2.0-or-later
 Source0:    %{name}-%{version}.tar.bz2

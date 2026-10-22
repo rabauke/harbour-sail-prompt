@@ -3,20 +3,21 @@ import Sailfish.Silica 1.0
 
 
 CoverBackground {
+  property var appWindow
 
   Icon {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
     anchors.verticalCenterOffset: -150
     source: '/usr/share/harbour-sail-prompt/images/cover.png'
-    opacity: 0.5
-    scale: 0.625
+    opacity: 0.6667
+    scale: 0.6
   }
 
   Column {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-    anchors.verticalCenterOffset: 150
+    anchors.verticalCenterOffset: 120
     width: parent.width - Theme.paddingLarge * 2
     spacing: Theme.paddingLarge
 
@@ -39,11 +40,14 @@ CoverBackground {
   }
 
   CoverActionList {
-    id: coverAction
+    enabled: appModel.configured && !appModel.busy
 
     CoverAction {
-      iconSource: 'image://theme/icon-s-plus'
-      onTriggered: appModel.clearChat()
+      iconSource: 'image://theme/icon-cover-message'
+      onTriggered: {
+        appModel.newChat()
+        appWindow.activate()
+      }
     }
   }
 

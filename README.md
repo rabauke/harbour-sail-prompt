@@ -24,6 +24,7 @@ The project depends on:
 
 - Qt5 (Core, Network, Qml, Gui, Quick)
 - `sailfishapp` (Sailfish OS application framework)
+- `sailfishsecrets` (Sailfish OS secure credential storage)
 - [md4c](https://github.com/mity/md4c) (bundled in `external/` and built automatically)
 
 ## Project Structure
@@ -40,7 +41,7 @@ The project depends on:
 Open the settings page in the app to configure:
 
 - **Base URL** — the OpenAI-compatible chat completion API base url.
-- **API key** — your API key (stored unencrypted in the application settings).
+- **API key** — stored securely with the Sailfish OS Secrets API; existing keys are migrated from application settings.
 - **System prompt** — an optional system prompt sent with every conversation.
 - **Model** — select from the models available on the configured endpoint.
 

@@ -11,6 +11,6 @@ Name[fr]=Sail Prompt
 Name[sv]=Sail Prompt
 
 [X-Sailjail]
-Permissions=Internet;UserDirs;WebView
+Permissions=Internet;UserDirs;WebView;Secrets
 OrganizationName=rabauke
 ApplicationName=harbour-sail-prompt

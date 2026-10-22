@@ -172,9 +172,39 @@
         <translation>sk-...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
-        <source>The API key is stored in the application settings and is not encrypted.</source>
-        <translation>La clave API se almacena en los ajustes de la aplicación y no está cifrada.</translation>
+        <location filename="../qml/pages/SettingsPage.qml" line="78"/>
+        <source>Saving API key securely...</source>
+        <translation>Guardando la clave API de forma segura...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="79"/>
+        <source>Loading API key securely...</source>
+        <translation>Cargando la clave API de forma segura...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="81"/>
+        <source>Secure storage error: %1</source>
+        <translation>Error de almacenamiento seguro: %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="84"/>
+        <source>API key is stored securely.</source>
+        <translation>La clave API está almacenada de forma segura.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="86"/>
+        <source>Save the API key securely before refreshing models.</source>
+        <translation>Guarda la clave API de forma segura antes de actualizar los modelos.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="87"/>
+        <source>Enter an API key to save it securely.</source>
+        <translation>Introduce una clave API para guardarla de forma segura.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="92"/>
+        <source>Save API key</source>
+        <translation>Guardar clave API</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="69"/>

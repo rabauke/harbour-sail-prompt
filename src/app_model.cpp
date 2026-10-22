@@ -31,6 +31,11 @@ AppModel::AppModel(QObject* parent)
       m_settings{settings_path(), QSettings::NativeFormat} {
   connect(m_sessionListModel, &SessionListModel::errorOccurred, this, &AppModel::errorOccurred);
   loadConfig();
+  m_credentialStore = new CredentialStore{&m_settings, nullptr, this};
+  connect(m_credentialStore, &CredentialStore::loadFinished, this,
+          &AppModel::onCredentialLoadFinished);
+  connect(m_credentialStore, &CredentialStore::saveFinished, this,
+          &AppModel::onCredentialSaveFinished);
 
   m_streamingUpdateTimer.setInterval(100);
   m_streamingUpdateTimer.setSingleShot(false);
@@ -43,6 +48,7 @@ AppModel::AppModel(QObject* parent)
   connect(m_api, SIGNAL(streamingChatFinished(QString, open_ai_api::Error)), this,
           SLOT(onStreamingChatFinished(QString, open_ai_api::Error)));
 
+  m_credentialStore->load();
   updateRenderedDocument();
 }
 
@@ -70,6 +76,7 @@ void AppModel::setBaseUrl(const QString& baseUrl) {
     Q_EMIT configuredChanged();
     Q_EMIT selectedModelAvailableChanged();
     Q_EMIT canSendChanged();
+    saveConfig();
   }
 }
 
@@ -80,18 +87,14 @@ QString AppModel::apiKey() const {
 
 
 void AppModel::setApiKey(const QString& apiKey) {
-  if (m_apiKey != apiKey) {
-    m_apiKey = apiKey;
-    m_api->setApiKey(m_apiKey);
-    m_models.clear();
-    m_model.clear();
-    Q_EMIT apiKeyChanged(m_apiKey);
-    Q_EMIT modelsChanged();
-    Q_EMIT modelChanged(m_model);
-    Q_EMIT configuredChanged();
-    Q_EMIT selectedModelAvailableChanged();
-    Q_EMIT canSendChanged();
+  if (m_credentialOperationPending) {
+    m_hasPendingApiKey = true;
+    m_pendingApiKey = apiKey;
+    return;
   }
+  if (m_credentialReady and m_apiKey == apiKey and m_credentialError.isEmpty())
+    return;
+  startCredentialSave(apiKey);
 }
 
 
@@ -162,8 +165,24 @@ bool AppModel::busy() const {
 
 bool AppModel::configured() const {
   const QUrl url{m_baseUrl};
-  return url.isValid() and not url.scheme().isEmpty() and not url.host().isEmpty() and
-         not m_apiKey.trimmed().isEmpty();
+  return m_credentialReady and m_credentialError.isEmpty() and
+         not m_credentialOperationPending and url.isValid() and not url.scheme().isEmpty() and
+         not url.host().isEmpty() and not m_apiKey.trimmed().isEmpty();
+}
+
+
+bool AppModel::credentialReady() const {
+  return m_credentialReady;
+}
+
+
+bool AppModel::credentialOperationPending() const {
+  return m_credentialOperationPending;
+}
+
+
+QString AppModel::credentialError() const {
+  return m_credentialError;
 }
 
 
@@ -430,6 +449,14 @@ void AppModel::applyConfig(const QString& url, const QString& apiKey,
 
 
 void AppModel::fetchModels() {
+  if (m_credentialOperationPending) {
+    m_fetchModelsAfterCredentialSave = true;
+    return;
+  }
+  if (not m_credentialReady) {
+    Q_EMIT errorOccurred("Secure API key storage is not ready");
+    return;
+  }
   if (not configured()) {
     Q_EMIT errorOccurred("Configure a valid API URL and key before loading models");
     return;
@@ -447,7 +474,7 @@ void AppModel::fetchModels() {
 
 void AppModel::loadConfig() {
   m_baseUrl = m_settings.value("baseUrl", "https://api.openai.com/v1").toString();
-  m_apiKey = m_settings.value("apiKey", "").toString();
+  m_apiKey.clear();
   m_model = m_settings.value("model", "").toString();
   m_systemPrompt = m_settings.value("systemPrompt", "").toString();
   m_webViewFontSize = qBound(8, m_settings.value("webViewFontSize", 16).toInt(), 32);
@@ -457,18 +484,152 @@ void AppModel::loadConfig() {
     m_model.clear();
 
   m_api->setBaseUrl(QUrl{m_baseUrl});
-  m_api->setApiKey(m_apiKey);
+  m_api->setApiKey({});
 }
 
 
 void AppModel::saveConfig() const {
   m_settings.setValue("baseUrl", m_baseUrl);
-  m_settings.setValue("apiKey", m_apiKey);
   m_settings.setValue("model", m_model);
   m_settings.setValue("systemPrompt", m_systemPrompt);
   m_settings.setValue("webViewFontSize", m_webViewFontSize);
   m_settings.setValue("models", m_models);
   m_settings.sync();
+}
+
+
+void AppModel::setCredentialOperationPending(bool pending) {
+  if (m_credentialOperationPending == pending)
+    return;
+  m_credentialOperationPending = pending;
+  Q_EMIT credentialOperationPendingChanged();
+  Q_EMIT configuredChanged();
+  Q_EMIT canSendChanged();
+}
+
+
+void AppModel::setCredentialError(const QString& error) {
+  if (m_credentialError == error)
+    return;
+  m_credentialError = error;
+  Q_EMIT credentialErrorChanged();
+  if (not error.isEmpty())
+    Q_EMIT errorOccurred(error);
+}
+
+
+void AppModel::setCredentialReady(bool ready) {
+  if (m_credentialReady == ready)
+    return;
+  m_credentialReady = ready;
+  Q_EMIT credentialReadyChanged();
+  Q_EMIT configuredChanged();
+  Q_EMIT canSendChanged();
+}
+
+
+void AppModel::updateApiKey(const QString& apiKey, bool resetModels) {
+  if (m_apiKey == apiKey)
+    return;
+
+  m_apiKey = apiKey;
+  m_api->setApiKey(m_apiKey);
+  Q_EMIT apiKeyChanged(m_apiKey);
+  if (resetModels) {
+    m_models.clear();
+    m_model.clear();
+    Q_EMIT modelsChanged();
+    Q_EMIT modelChanged(m_model);
+    Q_EMIT selectedModelAvailableChanged();
+    saveConfig();
+  }
+  Q_EMIT configuredChanged();
+  Q_EMIT canSendChanged();
+}
+
+
+void AppModel::startCredentialSave(const QString& apiKey) {
+  if (m_credentialReady and m_apiKey == apiKey) {
+    setCredentialError({});
+    fetchModelsAfterCredentialOperation();
+    return;
+  }
+  setCredentialError({});
+  setCredentialOperationPending(true);
+  m_credentialStore->save(apiKey);
+}
+
+
+void AppModel::fetchModelsAfterCredentialOperation() {
+  if (not m_fetchModelsAfterCredentialSave)
+    return;
+  m_fetchModelsAfterCredentialSave = false;
+  if (m_credentialReady)
+    fetchModels();
+}
+
+
+void AppModel::onCredentialLoadFinished(const QString& apiKey, bool success,
+                                        const QString& error) {
+  setCredentialReady(success);
+  if (success) {
+    updateApiKey(apiKey, false);
+    setCredentialError({});
+  } else {
+    setCredentialError(error);
+  }
+
+  if (m_hasPendingApiKey) {
+    const QString pendingApiKey{m_pendingApiKey};
+    m_hasPendingApiKey = false;
+    m_pendingApiKey.clear();
+    if (m_credentialReady and m_apiKey == pendingApiKey) {
+      setCredentialError({});
+      setCredentialOperationPending(false);
+      fetchModelsAfterCredentialOperation();
+    } else {
+      startCredentialSave(pendingApiKey);
+    }
+    return;
+  }
+
+  setCredentialOperationPending(false);
+  if (success)
+    fetchModelsAfterCredentialOperation();
+  else
+    m_fetchModelsAfterCredentialSave = false;
+}
+
+
+void AppModel::onCredentialSaveFinished(const QString& apiKey, bool success,
+                                        const QString& error) {
+  if (success) {
+    setCredentialReady(true);
+    updateApiKey(apiKey, true);
+    setCredentialError({});
+  } else {
+    setCredentialError(error);
+  }
+
+  if (m_hasPendingApiKey) {
+    const QString pendingApiKey{m_pendingApiKey};
+    m_hasPendingApiKey = false;
+    m_pendingApiKey.clear();
+    if (m_credentialReady and m_apiKey == pendingApiKey) {
+      setCredentialError({});
+      setCredentialOperationPending(false);
+      fetchModelsAfterCredentialOperation();
+    } else {
+      startCredentialSave(pendingApiKey);
+    }
+    return;
+  }
+
+  setCredentialOperationPending(false);
+  if (success)
+    fetchModelsAfterCredentialOperation();
+  else
+    m_fetchModelsAfterCredentialSave = false;
 }
 
 

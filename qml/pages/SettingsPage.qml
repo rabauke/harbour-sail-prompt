@@ -8,6 +8,9 @@ Page {
   allowedOrientations: Orientation.All
 
   property bool updatingModel: false
+  property bool updatingApiKey: false
+  property bool apiKeyEdited: false
+  property bool initialized: false
 
   function updateModelIndex() {
     updatingModel = true
@@ -54,17 +57,44 @@ Page {
         width: parent.width
         label: qsTr('API key')
         placeholderText: qsTr('sk-...')
+        enabled: !appModel.credentialOperationPending
         EnterKey.iconSource: 'image://theme/icon-m-enter-next'
         EnterKey.onClicked: systemPromptField.focus = true
         validator: RegExpValidator { regExp: /\S*/ }
+        onTextChanged: {
+          if (settingsPage.initialized && !settingsPage.updatingApiKey)
+            settingsPage.apiKeyEdited = true
+        }
       }
       Label {
+        id: credentialStatusLabel
         x: Theme.horizontalPageMargin
         width: parent.width - Theme.horizontalPageMargin * 2
-        color: Theme.secondaryColor
+        color: appModel.credentialError !== '' ? Theme.errorColor : Theme.secondaryColor
         font.pixelSize: Theme.fontSizeExtraSmall
         wrapMode: Text.WordWrap
-        text: qsTr('The API key is stored in the application settings and is not encrypted.')
+        text: {
+          if (appModel.credentialOperationPending)
+            return appModel.credentialReady ? qsTr('Saving API key securely...') :
+                                              qsTr('Loading API key securely...')
+          if (appModel.credentialError !== '')
+            return qsTr('Secure storage error: %1').arg(appModel.credentialError)
+          if (apiKeyField.text.length > 0 && appModel.credentialReady &&
+              apiKeyField.text === appModel.apiKey)
+            return qsTr('API key is stored securely.')
+          return apiKeyField.text.length > 0 ?
+                     qsTr('Save the API key securely before refreshing models.') :
+                     qsTr('Enter an API key to save it securely.')
+        }
+      }
+      Button {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: qsTr('Save API key')
+        enabled: !appModel.credentialOperationPending && !appModel.modelsLoading &&
+                 apiKeyField.text.trim().length > 0 &&
+                 (appModel.credentialError !== '' || !appModel.credentialReady ||
+                  apiKeyField.text !== appModel.apiKey)
+        onClicked: appModel.applyConfig(urlField.text, apiKeyField.text, systemPromptField.text)
       }
 
       SectionHeader {
@@ -83,7 +113,9 @@ Page {
       Button {
         anchors.horizontalCenter: parent.horizontalCenter
         text: appModel.modelsLoading ? qsTr('Loading models...') : qsTr('Refresh Models')
-        enabled: !appModel.modelsLoading && urlField.text.length > 0 && apiKeyField.text.length > 0
+        enabled: !appModel.modelsLoading && !appModel.credentialOperationPending &&
+                 appModel.credentialReady && appModel.credentialError === '' &&
+                 urlField.text.length > 0 && apiKeyField.text.trim().length > 0
         onClicked: {
           appModel.applyConfig(urlField.text, apiKeyField.text, systemPromptField.text)
           appModel.fetchModels()
@@ -164,23 +196,42 @@ Page {
   Connections {
     target: appModel
     onErrorOccurred: {
-      errorLabel.text = message
-      errorTimer.restart()
+      if (message !== appModel.credentialError) {
+        errorLabel.text = message
+        errorTimer.restart()
+      }
     }
     onModelsChanged: settingsPage.updateModelIndex()
     onModelChanged: settingsPage.updateModelIndex()
+    onApiKeyChanged: {
+      if (!settingsPage.apiKeyEdited) {
+        settingsPage.updatingApiKey = true
+        apiKeyField.text = apiKey
+        settingsPage.updatingApiKey = false
+      }
+    }
+    onCredentialOperationPendingChanged: {
+      if (!appModel.credentialOperationPending && appModel.credentialReady &&
+          apiKeyField.text === appModel.apiKey)
+        settingsPage.apiKeyEdited = false
+    }
   }
 
   Component.onCompleted: {
     urlField.text = appModel.baseUrl
     apiKeyField.text = appModel.apiKey
     systemPromptField.text = appModel.systemPrompt
+    initialized = true
     updateModelIndex()
   }
 
   onStatusChanged: {
     if (status === PageStatus.Deactivating) {
-      appModel.applyConfig(urlField.text, apiKeyField.text, systemPromptField.text)
+      appModel.baseUrl = urlField.text
+      appModel.systemPrompt = systemPromptField.text
+      if (!appModel.credentialOperationPending &&
+          (appModel.credentialReady || apiKeyEdited))
+        appModel.apiKey = apiKeyField.text
     }
   }
 }

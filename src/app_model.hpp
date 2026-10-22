@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QSettings>
 #include "chat_message_list_model.hpp"
+#include "credential_store.hpp"
 #include "open_ai_api.hpp"
 #include "session_store.hpp"
 #include "session_list_model.hpp"
@@ -30,6 +31,10 @@ public:
   Q_PROPERTY(ChatMessageListModel* messages READ messages CONSTANT)
   Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
   Q_PROPERTY(bool configured READ configured NOTIFY configuredChanged)
+  Q_PROPERTY(bool credentialReady READ credentialReady NOTIFY credentialReadyChanged)
+  Q_PROPERTY(bool credentialOperationPending READ credentialOperationPending NOTIFY
+                 credentialOperationPendingChanged)
+  Q_PROPERTY(QString credentialError READ credentialError NOTIFY credentialErrorChanged)
   Q_PROPERTY(bool modelsLoading READ modelsLoading NOTIFY modelsLoadingChanged)
   Q_PROPERTY(bool selectedModelAvailable READ selectedModelAvailable NOTIFY
                  selectedModelAvailableChanged)
@@ -68,6 +73,9 @@ public:
   ChatMessageListModel* messages() const;
   bool busy() const;
   bool configured() const;
+  bool credentialReady() const;
+  bool credentialOperationPending() const;
+  QString credentialError() const;
   bool modelsLoading() const;
   bool selectedModelAvailable() const;
   bool canSend() const;
@@ -92,6 +100,9 @@ public:
   Q_SIGNAL void busyChanged();
   Q_SIGNAL void errorOccurred(const QString& message);
   Q_SIGNAL void configuredChanged();
+  Q_SIGNAL void credentialReadyChanged();
+  Q_SIGNAL void credentialOperationPendingChanged();
+  Q_SIGNAL void credentialErrorChanged();
   Q_SIGNAL void modelsLoadingChanged();
   Q_SIGNAL void selectedModelAvailableChanged();
   Q_SIGNAL void canSendChanged();
@@ -112,10 +123,20 @@ private:
   Q_SLOT void onStreamingChatReply(const QString& reply);
   Q_SLOT void onStreamingChatFinished(const QString& reply, const open_ai_api::Error& error);
   Q_SLOT void onStreamingUpdateTimeout();
+  Q_SLOT void onCredentialLoadFinished(const QString& apiKey, bool success,
+                                       const QString& error);
+  Q_SLOT void onCredentialSaveFinished(const QString& apiKey, bool success,
+                                       const QString& error);
   Q_SLOT void updateRenderedDocument();
 
   void loadConfig();
   void saveConfig() const;
+  void setCredentialOperationPending(bool pending);
+  void setCredentialError(const QString& error);
+  void setCredentialReady(bool ready);
+  void updateApiKey(const QString& apiKey, bool resetModels);
+  void startCredentialSave(const QString& apiKey);
+  void fetchModelsAfterCredentialOperation();
   void setExportFailure(const QString& error);
   void refreshRenderedDocumentCache();
 
@@ -150,4 +171,11 @@ private:
   QString m_currentSessionId;
 
   mutable QSettings m_settings;
+  CredentialStore* m_credentialStore{nullptr};
+  bool m_credentialReady{false};
+  bool m_credentialOperationPending{true};
+  bool m_hasPendingApiKey{false};
+  QString m_pendingApiKey;
+  QString m_credentialError;
+  bool m_fetchModelsAfterCredentialSave{false};
 };

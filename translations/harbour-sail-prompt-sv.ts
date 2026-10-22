@@ -172,9 +172,39 @@
         <translation>sk-...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="63"/>
-        <source>The API key is stored in the application settings and is not encrypted.</source>
-        <translation>API-nyckeln lagras i programinställningarna och är inte krypterad.</translation>
+        <location filename="../qml/pages/SettingsPage.qml" line="78"/>
+        <source>Saving API key securely...</source>
+        <translation>Sparar API-nyckeln säkert...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="79"/>
+        <source>Loading API key securely...</source>
+        <translation>Läser in API-nyckeln säkert...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="81"/>
+        <source>Secure storage error: %1</source>
+        <translation>Fel i säker lagring: %1</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="84"/>
+        <source>API key is stored securely.</source>
+        <translation>API-nyckeln lagras säkert.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="86"/>
+        <source>Save the API key securely before refreshing models.</source>
+        <translation>Spara API-nyckeln säkert innan du uppdaterar modellerna.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="87"/>
+        <source>Enter an API key to save it securely.</source>
+        <translation>Ange en API-nyckel för att spara den säkert.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="92"/>
+        <source>Save API key</source>
+        <translation>Spara API-nyckel</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="69"/>

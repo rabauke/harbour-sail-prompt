@@ -6,6 +6,7 @@ find_package (Qt5 COMPONENTS Core Network Qml Gui Quick REQUIRED)
 
 include(FindPkgConfig)
 pkg_search_module(SAILFISH sailfishapp REQUIRED)
+pkg_search_module(SAILFISH_SECRETS sailfishsecrets REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -62,6 +63,7 @@ add_executable(harbour-sail-prompt
     src/chat_message_list_model.cpp
     src/open_ai_api.cpp
     src/app_model.cpp
+    src/credential_store.cpp
     src/html_renderer.cpp
     src/markdown_renderer.cpp
     src/markdown_exporter.cpp
@@ -80,11 +82,13 @@ target_include_directories(harbour-sail-prompt PRIVATE
     ${CMAKE_BINARY_DIR}/src
     ${CMAKE_BINARY_DIR}/external/md4c-0.6.0/src/
 )
+target_include_directories(harbour-sail-prompt PRIVATE ${SAILFISH_SECRETS_INCLUDE_DIRS})
 target_link_libraries(harbour-sail-prompt
     md4c
     Qt5::Quick
     Qt5::Network
     ${SAILFISH_LDFLAGS}
+    ${SAILFISH_SECRETS_LDFLAGS}
 )
 
 add_executable(test_app_model
@@ -113,6 +117,18 @@ add_executable(test_session_store
 )
 target_link_libraries(test_session_store
     Qt5::Core
+)
+
+add_executable(test_credential_store
+    src/test_credential_store.cpp
+    src/credential_store.cpp
+)
+target_include_directories(test_credential_store PRIVATE
+    ${SAILFISH_SECRETS_INCLUDE_DIRS}
+)
+target_link_libraries(test_credential_store
+    Qt5::Core
+    ${SAILFISH_SECRETS_LDFLAGS}
 )
 
 

@@ -22,6 +22,7 @@ public:
     ~Backend() override = default;
 
     virtual void read(ReadCallback callback) = 0;
+    virtual void remove(WriteCallback callback) = 0;
     virtual void write(const QString& value, WriteCallback callback) = 0;
   };
 
@@ -35,7 +36,7 @@ public:
   Q_SIGNAL void saveFinished(const QString& apiKey, bool success, const QString& error);
 
 private:
-  bool removeLegacyKey(QString* error);
+  void removeLegacyKey();
 
   QSettings* m_settings;
   Backend* m_backend;

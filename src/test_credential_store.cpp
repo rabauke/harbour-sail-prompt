@@ -19,11 +19,14 @@ namespace {
     bool readSuccess{true};
     bool secretFound{false};
     bool writeSuccess{true};
+    int failedWrites{0};
     QString storedValue;
     QString readError;
     QString writeError;
     int reads{0};
+    int removes{0};
     int writes{0};
+    QStringList operations;
 
     void read(ReadCallback callback) override {
       ++reads;
@@ -32,9 +35,24 @@ namespace {
 
     void write(const QString& value, WriteCallback callback) override {
       ++writes;
-      if (writeSuccess)
+      operations.append(QStringLiteral("write"));
+      if (failedWrites > 0) {
+        --failedWrites;
+        callback(false, writeError);
+        return;
+      }
+      if (writeSuccess) {
         storedValue = value;
+        secretFound = true;
+      }
       callback(writeSuccess, writeError);
+    }
+
+    void remove(WriteCallback callback) override {
+      ++removes;
+      operations.append(QStringLiteral("remove"));
+      secretFound = false;
+      callback(true, {});
     }
   };
 
@@ -74,6 +92,7 @@ namespace {
     store.load();
     if (not require(loadedSuccess and loadedValue == QStringLiteral("legacy-key"),
                     "legacy key migrates") ||
+        not require(backend.removes == 0, "migration overwrites without deleting") ||
         not require(backend.storedValue == QStringLiteral("legacy-key"),
                     "migrated key is written securely") ||
         not require(not settings.contains(QStringLiteral("apiKey")),
@@ -81,6 +100,7 @@ namespace {
       return false;
 
     backend.writeSuccess = false;
+    backend.secretFound = false;
     settings.setValue(QStringLiteral("apiKey"), QStringLiteral("recoverable-key"));
     store.load();
     if (not require(not loadedSuccess, "migration write failure is reported") ||
@@ -107,22 +127,40 @@ namespace {
           savedSuccess = success;
         });
     settings.setValue(QStringLiteral("apiKey"), QStringLiteral("old-key"));
-    backend.writeSuccess = false;
+    backend.secretFound = true;
+    backend.storedValue = QStringLiteral("existing-secure-key");
+    backend.failedWrites = 1;
     store.save(QStringLiteral("new-key"));
     if (not require(not savedSuccess, "credential save failure is reported") ||
+        not require(backend.secretFound and
+                        backend.storedValue == QStringLiteral("existing-secure-key"),
+                    "previous secure key is kept after replacement failure") ||
         not require(
             settings.value(QStringLiteral("apiKey")).toString() == QStringLiteral("old-key"),
             "legacy key preserved after credential save failure"))
       return false;
 
-    backend.writeSuccess = true;
     store.save(QStringLiteral("new-key"));
     if (not require(savedSuccess and savedValue == QStringLiteral("new-key"),
                     "credential save succeeds") ||
+        not require(backend.removes == 0 and backend.operations.last() == QStringLiteral("write"),
+                    "save overwrites without deleting first") ||
         not require(backend.storedValue == QStringLiteral("new-key"),
                     "new credential is written securely") ||
         not require(not settings.contains(QStringLiteral("apiKey")),
                     "legacy key removed after successful save"))
+      return false;
+
+    store.save(QStringLiteral("  padded-key \n"));
+    if (not require(savedSuccess and savedValue == QStringLiteral("padded-key") and
+                        backend.storedValue == QStringLiteral("padded-key"),
+                    "key is trimmed before saving"))
+      return false;
+
+    store.save(QStringLiteral("   "));
+    if (not require(savedSuccess and savedValue.isEmpty() and backend.removes == 1 and
+                        not backend.secretFound,
+                    "empty key removes the secret"))
       return false;
 
     return true;

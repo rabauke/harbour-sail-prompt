@@ -548,7 +548,8 @@ void AppModel::updateApiKey(const QString& apiKey, bool resetModels) {
 }
 
 
-void AppModel::startCredentialSave(const QString& apiKey) {
+void AppModel::startCredentialSave(const QString& rawApiKey) {
+  const QString apiKey{rawApiKey.trimmed()};
   if (m_credentialReady and m_apiKey == apiKey) {
     setCredentialError({});
     fetchModelsAfterCredentialOperation();
@@ -569,16 +570,7 @@ void AppModel::fetchModelsAfterCredentialOperation() {
 }
 
 
-void AppModel::onCredentialLoadFinished(const QString& apiKey, bool success,
-                                        const QString& error) {
-  setCredentialReady(success);
-  if (success) {
-    updateApiKey(apiKey, false);
-    setCredentialError({});
-  } else {
-    setCredentialError(error);
-  }
-
+void AppModel::finishCredentialOperation(bool success) {
   if (m_hasPendingApiKey) {
     const QString pendingApiKey{m_pendingApiKey};
     m_hasPendingApiKey = false;
@@ -601,6 +593,20 @@ void AppModel::onCredentialLoadFinished(const QString& apiKey, bool success,
 }
 
 
+void AppModel::onCredentialLoadFinished(const QString& apiKey, bool success,
+                                        const QString& error) {
+  setCredentialReady(success);
+  if (success) {
+    updateApiKey(apiKey, false);
+    setCredentialError({});
+  } else {
+    setCredentialError(error);
+  }
+
+  finishCredentialOperation(success);
+}
+
+
 void AppModel::onCredentialSaveFinished(const QString& apiKey, bool success,
                                         const QString& error) {
   if (success) {
@@ -611,25 +617,7 @@ void AppModel::onCredentialSaveFinished(const QString& apiKey, bool success,
     setCredentialError(error);
   }
 
-  if (m_hasPendingApiKey) {
-    const QString pendingApiKey{m_pendingApiKey};
-    m_hasPendingApiKey = false;
-    m_pendingApiKey.clear();
-    if (m_credentialReady and m_apiKey == pendingApiKey) {
-      setCredentialError({});
-      setCredentialOperationPending(false);
-      fetchModelsAfterCredentialOperation();
-    } else {
-      startCredentialSave(pendingApiKey);
-    }
-    return;
-  }
-
-  setCredentialOperationPending(false);
-  if (success)
-    fetchModelsAfterCredentialOperation();
-  else
-    m_fetchModelsAfterCredentialSave = false;
+  finishCredentialOperation(success);
 }
 
 

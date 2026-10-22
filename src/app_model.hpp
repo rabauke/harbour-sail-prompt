@@ -135,6 +135,7 @@ private:
   void setCredentialError(const QString& error);
   void setCredentialReady(bool ready);
   void updateApiKey(const QString& apiKey, bool resetModels);
+  void finishCredentialOperation(bool success);
   void startCredentialSave(const QString& apiKey);
   void fetchModelsAfterCredentialOperation();
   void setExportFailure(const QString& error);

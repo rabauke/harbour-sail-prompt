@@ -11,6 +11,9 @@ Page {
   property bool updatingApiKey: false
   property bool apiKeyEdited: false
   property bool initialized: false
+  property var providerNames: [qsTr('Manual setup'), 'OpenAI', 'Open Router', 'Mistral', 'Mammouth.AI']
+  property var providerUrls: ['', 'https://api.openai.com/v1', 'https://openrouter.ai/api/v1',
+                             'https://api.mistral.ai/v1', 'https://api.mammouth.ai/v1']
 
   function updateModelIndex() {
     updatingModel = true
@@ -42,11 +45,31 @@ Page {
       SectionHeader {
         text: qsTr('LLM provider')
       }
+      ComboBox {
+        id: providerCombo
+        width: parent.width
+        label: qsTr('Provider')
+
+        menu: ContextMenu {
+          Repeater {
+            model: settingsPage.providerNames
+            MenuItem {
+              text: modelData
+            }
+          }
+        }
+
+        onCurrentIndexChanged: {
+          if (currentIndex > 0 && currentIndex < settingsPage.providerUrls.length)
+            urlField.text = settingsPage.providerUrls[currentIndex]
+        }
+      }
       TextField {
         id: urlField
         width: parent.width
         label: qsTr('Base URL')
         placeholderText: qsTr('https://api.openai.com/v1')
+        readOnly: providerCombo.currentIndex > 0
         inputMethodHints: Qt.ImhUrlCharactersOnly
         EnterKey.iconSource: 'image://theme/icon-m-enter-next'
         EnterKey.onClicked: apiKeyField.focus = true
@@ -219,6 +242,14 @@ Page {
 
   Component.onCompleted: {
     urlField.text = appModel.baseUrl
+    var providerIndex = 0
+    for (var i = 1; i < providerUrls.length; ++i) {
+      if (providerUrls[i] === appModel.baseUrl) {
+        providerIndex = i
+        break
+      }
+    }
+    providerCombo.currentIndex = providerIndex
     apiKeyField.text = appModel.apiKey
     systemPromptField.text = appModel.systemPrompt
     initialized = true

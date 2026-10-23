@@ -105,7 +105,7 @@ QString AppModel::model() const {
 
 void AppModel::setModel(const QString& model) {
   if (not model.isEmpty() and not m_models.contains(model)) {
-    Q_EMIT errorOccurred("Select a model returned by the configured API");
+    Q_EMIT errorOccurred(tr("Select a model returned by the configured API"));
     return;
   }
   if (m_model != model) {
@@ -273,7 +273,7 @@ void AppModel::saveCurrentSession() {
 
 void AppModel::loadSession(int index) {
   if (m_busy) {
-    Q_EMIT errorOccurred("Cannot load a session while a response is streaming");
+    Q_EMIT errorOccurred(tr("Cannot load a session while a response is streaming"));
     return;
   }
   const QString selectedId{m_sessionListModel->sessionId(index)};
@@ -293,7 +293,7 @@ void AppModel::loadSession(int index) {
 
 void AppModel::newChat() {
   if (m_busy) {
-    Q_EMIT errorOccurred("Cannot start a new chat while a response is streaming");
+    Q_EMIT errorOccurred(tr("Cannot start a new chat while a response is streaming"));
     return;
   }
   saveCurrentSession();
@@ -370,7 +370,7 @@ void AppModel::addUserMessage(const QString& content) {
   if (content.trimmed().isEmpty())
     return;
   if (not canSend()) {
-    Q_EMIT errorOccurred("Configure the API and select a discovered model before sending");
+    Q_EMIT errorOccurred(tr("Configure the API and select a discovered model before sending"));
     return;
   }
 
@@ -429,7 +429,7 @@ void AppModel::addUserMessage(const QString& content) {
 
 void AppModel::clearChat() {
   if (m_busy) {
-    Q_EMIT errorOccurred("Cannot clear the chat while a response is streaming");
+    Q_EMIT errorOccurred(tr("Cannot clear the chat while a response is streaming"));
     return;
   }
   m_messages->clear();
@@ -454,15 +454,15 @@ void AppModel::fetchModels() {
     return;
   }
   if (not m_credentialReady) {
-    Q_EMIT errorOccurred("Secure API key storage is not ready");
+    Q_EMIT errorOccurred(tr("Secure API key storage is not ready"));
     return;
   }
   if (not configured()) {
-    Q_EMIT errorOccurred("Configure a valid API URL and key before loading models");
+    Q_EMIT errorOccurred(tr("Configure a valid API URL and key before loading models"));
     return;
   }
   if (m_busy or m_modelsLoading) {
-    Q_EMIT errorOccurred("Another API request is already in progress");
+    Q_EMIT errorOccurred(tr("Another API request is already in progress"));
     return;
   }
   m_modelsLoading = true;

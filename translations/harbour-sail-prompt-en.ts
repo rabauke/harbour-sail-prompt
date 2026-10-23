@@ -32,6 +32,46 @@
 <context>
     <name>AppModel</name>
     <message>
+        <location filename="../src/app_model.cpp" line="108"/>
+        <source>Select a model returned by the configured API</source>
+        <translation>Select a model returned by the configured API</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="276"/>
+        <source>Cannot load a session while a response is streaming</source>
+        <translation>Cannot load a session while a response is streaming</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="296"/>
+        <source>Cannot start a new chat while a response is streaming</source>
+        <translation>Cannot start a new chat while a response is streaming</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="373"/>
+        <source>Configure the API and select a discovered model before sending</source>
+        <translation>Configure the API and select a discovered model before sending</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="432"/>
+        <source>Cannot clear the chat while a response is streaming</source>
+        <translation>Cannot clear the chat while a response is streaming</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="457"/>
+        <source>Secure API key storage is not ready</source>
+        <translation>Secure API key storage is not ready</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="461"/>
+        <source>Configure a valid API URL and key before loading models</source>
+        <translation>Configure a valid API URL and key before loading models</translation>
+    </message>
+    <message>
+        <location filename="../src/app_model.cpp" line="465"/>
+        <source>Another API request is already in progress</source>
+        <translation>Another API request is already in progress</translation>
+    </message>
+    <message>
         <location filename="../src/app_model.cpp" line="272"/>
         <source>Cannot export while a response is streaming</source>
         <translation>Cannot export while a response is streaming</translation>
@@ -127,19 +167,6 @@
     </message>
 </context>
 <context>
-    <name>SecondPage</name>
-    <message>
-        <location filename="../qml/pages/SecondPage.qml" line="16"/>
-        <source>Nested Page</source>
-        <translation>Nested Page</translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/SecondPage.qml" line="23"/>
-        <source>Item</source>
-        <translation>Item</translation>
-    </message>
-</context>
-<context>
     <name>SettingsPage</name>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="33"/>
@@ -147,9 +174,19 @@
         <translation>Settings</translation>
     </message>
     <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="14"/>
+        <source>Manual setup</source>
+        <translation>Manual setup</translation>
+    </message>
+    <message>
         <location filename="../qml/pages/SettingsPage.qml" line="40"/>
         <source>LLM provider</source>
         <translation>LLM provider</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
+        <source>Provider</source>
+        <translation>Provider</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="39"/>

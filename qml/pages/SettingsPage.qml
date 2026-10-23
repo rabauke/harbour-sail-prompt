@@ -12,7 +12,7 @@ Page {
   property bool apiKeyEdited: false
   property bool initialized: false
   property var providerNames: [qsTr('Manual setup'), 'OpenAI', 'Open Router', 'Mistral', 'Mammouth.AI']
-  property var providerUrls: ['', 'https://api.openai.com/v1', 'https://openrouter.ai/api/v1',
+  property var providerUrls: ['https://', 'https://api.openai.com/v1', 'https://openrouter.ai/api/v1',
                              'https://api.mistral.ai/v1', 'https://api.mammouth.ai/v1']
 
   function updateModelIndex() {
@@ -43,6 +43,26 @@ Page {
       }
 
       SectionHeader {
+        text: qsTr('Configuration State')
+      }
+      DetailItem {
+        label: qsTr('Configured')
+        value: appModel.configured ? qsTr('Yes') : qsTr('No')
+      }
+      DetailItem {
+        label: qsTr('Model Selected')
+        value: appModel.selectedModelAvailable ? appModel.model : qsTr('None')
+      }
+      Label {
+        id: errorLabel
+        x: Theme.horizontalPageMargin
+        width: parent.width - Theme.horizontalPageMargin * 2
+        color: Theme.errorColor
+        wrapMode: Text.WordWrap
+        visible: text !== ''
+      }
+
+      SectionHeader {
         text: qsTr('LLM provider')
       }
       ComboBox {
@@ -60,7 +80,8 @@ Page {
         }
 
         onCurrentIndexChanged: {
-          if (currentIndex > 0 && currentIndex < settingsPage.providerUrls.length)
+          if (settingsPage.initialized && currentIndex >= 0 &&
+              currentIndex < settingsPage.providerUrls.length)
             urlField.text = settingsPage.providerUrls[currentIndex]
         }
       }
@@ -121,16 +142,6 @@ Page {
       }
 
       SectionHeader {
-        text: qsTr('System prompt')
-      }
-      TextArea {
-        id: systemPromptField
-        width: parent.width
-        label: qsTr('System prompt')
-        placeholderText: qsTr('You are a helpful assistant.')
-      }
-
-      SectionHeader {
         text: qsTr('Model')
       }
       Button {
@@ -168,6 +179,16 @@ Page {
       }
 
       SectionHeader {
+        text: qsTr('System prompt')
+      }
+      TextArea {
+        id: systemPromptField
+        width: parent.width
+        label: qsTr('System prompt')
+        placeholderText: qsTr('You are a helpful assistant.')
+      }
+
+      SectionHeader {
         text: qsTr('Web view')
       }
       Slider {
@@ -179,26 +200,6 @@ Page {
         valueText: Math.round(value) + ' px'
         label: qsTr('Font size')
         onValueChanged: appModel.webViewFontSize = Math.round(value)
-      }
-
-      SectionHeader {
-        text: qsTr('Configuration State')
-      }
-      DetailItem {
-        label: qsTr('Configured')
-        value: appModel.configured ? qsTr('Yes') : qsTr('No')
-      }
-      DetailItem {
-        label: qsTr('Model Selected')
-        value: appModel.selectedModelAvailable ? appModel.model : qsTr('None')
-      }
-      Label {
-        id: errorLabel
-        x: Theme.horizontalPageMargin
-        width: parent.width - Theme.horizontalPageMargin * 2
-        color: Theme.errorColor
-        wrapMode: Text.WordWrap
-        visible: text !== ''
       }
       Item {
         width: 1

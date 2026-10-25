@@ -96,6 +96,16 @@ Page {
         EnterKey.onClicked: apiKeyField.focus = true
         validator: RegExpValidator { regExp: /https?:\/\/\S*/ }
       }
+      Label {
+        id: httpWarningLabel
+        x: Theme.horizontalPageMargin
+        width: parent.width - Theme.horizontalPageMargin * 2
+        color: Theme.errorColor
+        font.pixelSize: Theme.fontSizeExtraSmall
+        wrapMode: Text.WordWrap
+        visible: apiKeyField.text.trim().length > 0 && /^http:\/\//i.test(urlField.text.trim())
+        text: qsTr('Warning: Sending an API key over unencrypted HTTP exposes it to network interception.')
+      }
       PasswordField {
         id: apiKeyField
         width: parent.width

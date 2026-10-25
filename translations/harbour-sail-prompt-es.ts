@@ -4,29 +4,28 @@
 <context>
     <name>About</name>
     <message>
-        <location filename="../qml/pages/About.qml" line="29"/>
+        <location filename="../qml/pages/About.qml" line="30"/>
         <source>_description_</source>
         <translation>Sail Prompt es una aplicación de chat con IA para Sailfish OS. Necesita acceso a una API de finalización de chat compatible con OpenAI.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/About.qml" line="32"/>
+        <location filename="../qml/pages/About.qml" line="34"/>
         <source>Copyright</source>
         <translation>Copyright</translation>
     </message>
     <message>
-        <location filename="../qml/pages/About.qml" line="43"/>
+        <location filename="../qml/pages/About.qml" line="46"/>
         <source>License</source>
         <translation>Licencia</translation>
     </message>
     <message>
-        <location filename="../qml/pages/About.qml" line="67"/>
+        <location filename="../qml/pages/About.qml" line="71"/>
         <source>External components</source>
         <translation>Componentes externos</translation>
     </message>
     <message>
-        <location filename="../qml/pages/About.qml" line="94"/>
         <source>Compatible LLM providers</source>
-        <translation>Proveedores de LLM compatibles</translation>
+        <translation type="vanished">Proveedores de LLM compatibles</translation>
     </message>
 </context>
 <context>
@@ -37,52 +36,52 @@
         <translation>Selecciona un modelo devuelto por la API configurada</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="276"/>
+        <location filename="../src/app_model.cpp" line="286"/>
         <source>Cannot load a session while a response is streaming</source>
         <translation>No se puede cargar una sesión mientras se recibe una respuesta</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="296"/>
+        <location filename="../src/app_model.cpp" line="306"/>
         <source>Cannot start a new chat while a response is streaming</source>
         <translation>No se puede iniciar un chat nuevo mientras se recibe una respuesta</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="373"/>
+        <location filename="../src/app_model.cpp" line="383"/>
         <source>Configure the API and select a discovered model before sending</source>
         <translation>Configura la API y selecciona un modelo detectado antes de enviar</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="432"/>
+        <location filename="../src/app_model.cpp" line="442"/>
         <source>Cannot clear the chat while a response is streaming</source>
         <translation>No se puede borrar el chat mientras se recibe una respuesta</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="457"/>
+        <location filename="../src/app_model.cpp" line="467"/>
         <source>Secure API key storage is not ready</source>
         <translation>El almacenamiento seguro de la clave API no está listo</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="461"/>
+        <location filename="../src/app_model.cpp" line="471"/>
         <source>Configure a valid API URL and key before loading models</source>
         <translation>Configura una URL de API y una clave válidas antes de cargar modelos</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="465"/>
+        <location filename="../src/app_model.cpp" line="475"/>
         <source>Another API request is already in progress</source>
         <translation>Ya hay otra solicitud a la API en curso</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="272"/>
+        <location filename="../src/app_model.cpp" line="317"/>
         <source>Cannot export while a response is streaming</source>
         <translation>No se puede exportar mientras se recibe una respuesta</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="276"/>
+        <location filename="../src/app_model.cpp" line="321"/>
         <source>A Markdown export is already in progress</source>
         <translation>Ya hay una exportación a Markdown en curso</translation>
     </message>
     <message>
-        <location filename="../src/app_model.cpp" line="302"/>
+        <location filename="../src/app_model.cpp" line="347"/>
         <source>Markdown exported to %1</source>
         <translation>Markdown exportado a %1</translation>
     </message>
@@ -90,19 +89,42 @@
 <context>
     <name>CoverPage</name>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="26"/>
+        <location filename="../qml/cover/CoverPage.qml" line="27"/>
         <source>Sail Prompt</source>
         <translation>Sail Prompt</translation>
     </message>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="35"/>
+        <location filename="../qml/cover/CoverPage.qml" line="36"/>
         <source>Thinking...</source>
         <translation>Pensando...</translation>
     </message>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="35"/>
+        <location filename="../qml/cover/CoverPage.qml" line="36"/>
         <source>Ready</source>
         <translation>Listo</translation>
+    </message>
+</context>
+<context>
+    <name>HistoryPage</name>
+    <message>
+        <location filename="../qml/pages/HistoryPage.qml" line="27"/>
+        <source>History</source>
+        <translation>Historial</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/HistoryPage.qml" line="88"/>
+        <source>No history yet</source>
+        <translation>Aún no hay historial</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/HistoryPage.qml" line="72"/>
+        <source>Delete</source>
+        <translation>Eliminar</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/HistoryPage.qml" line="75"/>
+        <source>Deleting</source>
+        <translation>Eliminando</translation>
     </message>
 </context>
 <context>
@@ -144,32 +166,9 @@
     </message>
 </context>
 <context>
-    <name>HistoryPage</name>
-    <message>
-        <location filename="../qml/pages/HistoryPage.qml" line="27"/>
-        <source>History</source>
-        <translation>Historial</translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/HistoryPage.qml" line="88"/>
-        <source>No history yet</source>
-        <translation>Aún no hay historial</translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/HistoryPage.qml" line="72"/>
-        <source>Delete</source>
-        <translation>Eliminar</translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/HistoryPage.qml" line="75"/>
-        <source>Deleting</source>
-        <translation>Eliminando</translation>
-    </message>
-</context>
-<context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="33"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="42"/>
         <source>Settings</source>
         <translation>Ajustes</translation>
     </message>
@@ -179,137 +178,144 @@
         <translation>Configuración manual</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="40"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="66"/>
         <source>LLM provider</source>
         <translation>Proveedor de LLM</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="71"/>
         <source>Provider</source>
         <translation>Proveedor</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="39"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="91"/>
         <source>Base URL</source>
         <translation>URL base</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="40"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="92"/>
         <source>https://api.openai.com/v1</source>
         <translation>https://api.openai.com/v1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="102"/>
         <source>API key</source>
         <translation>Clave API</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="51"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="103"/>
         <source>sk-...</source>
         <translation>sk-...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="78"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="122"/>
         <source>Saving API key securely...</source>
         <translation>Guardando la clave API de forma segura...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="79"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="123"/>
         <source>Loading API key securely...</source>
         <translation>Cargando la clave API de forma segura...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="81"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="125"/>
         <source>Secure storage error: %1</source>
         <translation>Error de almacenamiento seguro: %1</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="84"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="128"/>
         <source>API key is stored securely.</source>
         <translation>La clave API está almacenada de forma segura.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="86"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="130"/>
         <source>Save the API key securely before refreshing models.</source>
         <translation>Guarda la clave API de forma segura antes de actualizar los modelos.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="87"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="131"/>
         <source>Enter an API key to save it securely.</source>
         <translation>Introduce una clave API para guardarla de forma segura.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="92"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="142"/>
+        <source>Warning: Sending an API key over unencrypted HTTP exposes it to network interception.</source>
+        <translation>Advertencia: Enviar una clave API a través de HTTP sin cifrar la expone a ser interceptada en la red.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsPage.qml" line="146"/>
         <source>Save API key</source>
         <translation>Guardar clave API</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="69"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="192"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="197"/>
         <source>System prompt</source>
         <translation>Prompt del sistema</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="70"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="198"/>
         <source>You are a helpful assistant.</source>
         <translation>Eres un asistente útil.</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="75"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="159"/>
         <source>Loading models...</source>
         <translation>Cargando modelos...</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="75"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="159"/>
         <source>Refresh Models</source>
         <translation>Actualizar modelos</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="87"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="172"/>
         <source>Refresh models to select</source>
         <translation>Actualiza los modelos para seleccionar uno</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="86"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="155"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="171"/>
         <source>Model</source>
         <translation>Modelo</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="80"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="202"/>
         <source>Web view</source>
         <translation>Vista web</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="90"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="211"/>
         <source>Font size</source>
         <translation>Tamaño de fuente</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="107"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="46"/>
         <source>Configuration State</source>
         <translation>Estado de la configuración</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="111"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="49"/>
         <source>Configured</source>
         <translation>Configurado</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="112"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
         <source>Yes</source>
         <translation>Sí</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="112"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="50"/>
         <source>No</source>
         <translation>No</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="116"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="53"/>
         <source>Model Selected</source>
         <translation>Modelo seleccionado</translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsPage.qml" line="117"/>
+        <location filename="../qml/pages/SettingsPage.qml" line="54"/>
         <source>None</source>
         <translation>Ninguno</translation>
     </message>

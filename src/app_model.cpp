@@ -247,16 +247,26 @@ SessionListModel* AppModel::history() const {
 
 
 void AppModel::saveCurrentSession() {
-  if (m_busy)
-    return;
   if (m_messages->rowCount() == 0)
     return;
+
+  if (m_assistantMessageIndex >= 0 and m_assistantMessageIndex < m_messages->rowCount() and
+      not m_pendingStreamingContent.isEmpty()) {
+    ChatMessage* msg{m_messages->get(m_assistantMessageIndex)};
+    if (msg) {
+      m_messages->setContent(m_assistantMessageIndex,
+                             msg->content() + m_pendingStreamingContent);
+    }
+    m_pendingStreamingContent.clear();
+  }
 
   Session session;
   session.id = m_currentSessionId;
   for (int i{0}; i < m_messages->rowCount(); ++i) {
     ChatMessage* msg{m_messages->get(i)};
     if (msg->role() != ChatMessage::User and msg->role() != ChatMessage::Agent)
+      continue;
+    if (msg->role() == ChatMessage::Agent and msg->content().trimmed().isEmpty())
       continue;
     session.messages.append(new ChatMessage{msg->role(), msg->content()});
   }

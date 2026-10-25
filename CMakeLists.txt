@@ -114,6 +114,7 @@ add_executable(test_session_store
     src/session_store.cpp
     src/session_list_model.cpp
     src/chat_message.cpp
+    src/chat_message_list_model.cpp
 )
 target_link_libraries(test_session_store
     Qt5::Core

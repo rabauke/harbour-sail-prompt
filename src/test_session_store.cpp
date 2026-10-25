@@ -8,6 +8,7 @@
 #include "session_store.hpp"
 #include "session_list_model.hpp"
 #include "chat_message.hpp"
+#include "chat_message_list_model.hpp"
 
 namespace {
   bool require(bool condition, const char* message) {
@@ -282,6 +283,65 @@ int main(int argc, char* argv[]) {
       return 1;
     SessionStore::clearSession(older);
     SessionStore::clearSession(newer);
+  }
+
+  {
+    // testStreamingInterruptedSessionPersistence
+    QTemporaryDir tempDir;
+    SessionStore store;
+    store.setStoragePath(tempDir.path());
+
+    // Scenario 1: Interrupted with partial stream reply
+    ChatMessageListModel messages;
+    messages.add(new ChatMessage{ChatMessage::User, "User prompt before streaming"});
+    int assistantIndex = messages.rowCount();
+    messages.add(new ChatMessage{ChatMessage::Agent, ""});
+    QString pendingStreaming = "Partial stream response received";
+    if (assistantIndex >= 0 && assistantIndex < messages.rowCount() && !pendingStreaming.isEmpty()) {
+      ChatMessage* msg{messages.get(assistantIndex)};
+      if (msg)
+        messages.setContent(assistantIndex, msg->content() + pendingStreaming);
+      pendingStreaming.clear();
+    }
+
+    Session session1;
+    for (int i{0}; i < messages.rowCount(); ++i) {
+      ChatMessage* msg{messages.get(i)};
+      if (msg->role() != ChatMessage::User && msg->role() != ChatMessage::Agent)
+        continue;
+      if (msg->role() == ChatMessage::Agent && msg->content().trimmed().isEmpty())
+        continue;
+      session1.messages.append(new ChatMessage{msg->role(), msg->content()});
+    }
+
+    if (!require(store.saveSession(session1), "save partial streaming session") ||
+        !require(session1.messages.size() == 2, "session contains user prompt and partial response") ||
+        !require(session1.messages[1]->content() == "Partial stream response received",
+                 "partial response text preserved"))
+      return 1;
+    SessionStore::clearSession(session1);
+
+    // Scenario 2: Interrupted before any stream tokens arrived (empty agent placeholder)
+    ChatMessageListModel emptyAgentMessages;
+    emptyAgentMessages.add(new ChatMessage{ChatMessage::User, "Prompt with zero stream tokens"});
+    emptyAgentMessages.add(new ChatMessage{ChatMessage::Agent, "   "});
+
+    Session session2;
+    for (int i{0}; i < emptyAgentMessages.rowCount(); ++i) {
+      ChatMessage* msg{emptyAgentMessages.get(i)};
+      if (msg->role() != ChatMessage::User && msg->role() != ChatMessage::Agent)
+        continue;
+      if (msg->role() == ChatMessage::Agent && msg->content().trimmed().isEmpty())
+        continue;
+      session2.messages.append(new ChatMessage{msg->role(), msg->content()});
+    }
+
+    if (!require(store.saveSession(session2), "save session filtering empty agent placeholder") ||
+        !require(session2.messages.size() == 1, "session has only user message, empty agent dropped") ||
+        !require(session2.messages[0]->content() == "Prompt with zero stream tokens",
+                 "user prompt preserved"))
+      return 1;
+    SessionStore::clearSession(session2);
   }
 
   std::cout << "All session store backend tests passed" << std::endl;

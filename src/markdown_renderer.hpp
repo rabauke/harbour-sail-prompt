@@ -5,9 +5,11 @@
 
 namespace markdown_renderer {
 
-  // Renders the given Markdown text as an HTML fragment suitable for use as innerHTML of an
-  // element. LaTeX math spans (`$...$` and `$$...$$`) are converted to MathJax delimiters
-  // (`\(...\)` and `\[...\]`) so that a MathJax renderer loaded on the page can typeset them.
+  /// Renders Markdown as an HTML fragment suitable for use as an element's innerHTML.
+  /// LaTeX math spans (`$...$` and `$$...$$`) are converted to MathJax delimiters
+  /// (`\(...\)` and `\[...\]`) for typesetting by a loaded MathJax renderer.
+  /// \param markdown Markdown source text.
+  /// \return The rendered HTML fragment.
   QString to_html(const QString& markdown);
 
 }  // namespace markdown_renderer

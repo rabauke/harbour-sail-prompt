@@ -171,7 +171,7 @@ namespace open_ai_api {
   OpenAiApi::OpenAiApi(const QUrl& baseUrl, const QString& apiKey, QObject* parent)
       : QObject{parent},
         m_base_url{baseUrl},
-        m_api_key{apiKey},
+        m_api_key{apiKey.trimmed()},
         m_network_access_manager{new QNetworkAccessManager{this}},
         m_reply{nullptr},
         m_request_kind{NoRequest},
@@ -198,7 +198,7 @@ namespace open_ai_api {
 
 
   void OpenAiApi::setApiKey(const QString& key) {
-    m_api_key = key;
+    m_api_key = key.trimmed();
   }
 
 
@@ -276,7 +276,8 @@ namespace open_ai_api {
     urlStr.append("models");
 
     QNetworkRequest request{QUrl{urlStr}};
-    request.setRawHeader("Authorization", ("Bearer " + m_api_key).toUtf8());
+    if (not m_api_key.isEmpty() and not m_api_key.isNull())
+      request.setRawHeader("Authorization", ("Bearer " + m_api_key).toUtf8());
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
     request.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
